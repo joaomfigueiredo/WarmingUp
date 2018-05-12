@@ -3,7 +3,7 @@
 
 #define TEXTUAL 1
 #define GRAPHICAL 2
-
+#define BUFFER_SIZE 200
 
 typedef struct{
 	int day;

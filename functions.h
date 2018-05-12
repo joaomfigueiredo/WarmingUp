@@ -5,6 +5,8 @@
 
 
 int ParamReading(int, char *[], char [2][50]);
+void MenuSurfer();
+int MainMenu();
 
 
 #endif

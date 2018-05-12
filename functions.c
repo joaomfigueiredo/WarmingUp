@@ -86,3 +86,26 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
 
       return _mode;
 }
+
+
+void MenuSurfer(){
+      int aux=0;
+      aux = MainMenu();
+
+}
+
+int MainMenu(){
+      int _aux=0;
+      char buffer[BUFFER_SIZE];
+
+      printf("MENU PRINCIPAL\n\n1 - Seleção de dados \n2 - Histórico de Temperaturas \n3 - Análise de temperatura por ano \n4 - Análise de temperatura\n");
+      printf("\n Escolha a opção: ");
+      while(1){
+            if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
+
+            if((sscanf(buffer,"%d",&_aux)==1)&&(0<_aux&&_aux<5)) break;
+            else (printf("Introduz um número associado a uma opção! : "));
+      }
+
+      return _aux;
+}
