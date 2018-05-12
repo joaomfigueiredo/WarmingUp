@@ -15,7 +15,7 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
 
             if (strcmp(argv[i], "-g")==0){
                   if (_mode!=0){
-                        fprintf(stderr, "ERROR: Check parameters (repeated defintion -g).\n");
+                        fprintf(stderr, "ERROR: Check parameters (repeated definition -g).\n");
                         exit (-1);
                   }
                   _mode = GRAPHICAL;
@@ -23,7 +23,7 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
             }
             else if (strcmp(argv[i], "-t")==0){
                   if (_mode!=0){
-                        fprintf(stderr, "ERROR: Check parameters (repeated defintion -t).\n");
+                        fprintf(stderr, "ERROR: Check parameters (repeated definition -t).\n");
                         exit (-1);
                   }
                   _mode = TEXTUAL;
@@ -32,7 +32,7 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
             else if(i==5) break;
             else if ( (strcmp(argv[i], "-f1")) == 0 ){
                   if (files[0][0]!=0){
-                        fprintf(stderr, "ERROR: Check parameters (repeated defintion -f1).\n");
+                        fprintf(stderr, "ERROR: Check parameters (repeated definition -f1).\n");
                         exit (-1);
                   }
                   if( (aux = strrchr(argv[i+1],'.')) != NULL ) {
@@ -49,7 +49,7 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
             }
             else if ( (strcmp(argv[i], "-f2")) == 0){
                   if (files[1][0]!=0){
-                        fprintf(stderr, "ERROR: Check parameters (repeated defintion -f2).\n");
+                        fprintf(stderr, "ERROR: Check parameters (repeated definition -f2).\n");
                         exit (-1);
                   }
                   if( (aux = strrchr(argv[i+1],'.')) != NULL ) {
