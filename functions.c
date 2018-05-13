@@ -98,7 +98,11 @@ int MainMenu(){
       int _aux=0;
       char buffer[BUFFER_SIZE];
 
-      printf("MENU PRINCIPAL\n\n1 - Seleção de dados \n2 - Histórico de Temperaturas \n3 - Análise de temperatura por ano \n4 - Análise de temperatura\n");
+      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU PRINCIPAL: \n\n" ANSI_COLOR_RESET);
+      printf(ANSI_COLOR_BOLD_RED "1 - Seleção de dados \n" ANSI_COLOR_RESET);
+      printf(ANSI_COLOR_BOLD_BLUE "2 - Histórico de Temperaturas \n" ANSI_COLOR_RESET);
+      printf(ANSI_COLOR_BOLD_YELLOW "3 - Análise de temperatura por ano \n" ANSI_COLOR_RESET);
+      printf(ANSI_COLOR_BOLD_GREEN "4 - Análise de temperatura\n" ANSI_COLOR_RESET);
       printf("\n Escolha a opção: ");
       while(1){
             if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
