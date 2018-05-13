@@ -5,8 +5,10 @@
 
 
 int ParamReading(int, char *[], char [2][50]);
-void MenuSurfer();
+void MenuSurfer(int*);
 int MainMenu();
+int DataFilter();
+int TemperatureHistory(int*);
 
 
 #endif

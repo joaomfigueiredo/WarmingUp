@@ -88,9 +88,30 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
 }
 
 
-void MenuSurfer(){
-      int aux=0;
-      aux = MainMenu();
+void MenuSurfer(int* T){
+
+      if ( MainMenu () == 1){
+
+           DataFilter();
+           return;
+      }
+
+
+      if ( MainMenu () == 2){
+
+           TemperatureHistory(T);
+           return;
+      }
+
+      if ( MainMenu () == 3){
+
+           //YearTempAnalise();
+      }
+
+      if ( MainMenu() == 4){
+
+           //GlobalTempAnalise();
+      }
 
 }
 
@@ -112,4 +133,50 @@ int MainMenu(){
       }
 
       return _aux;
+}
+
+
+int DataFilter(){
+
+     int _auxdf = 0;
+     char buffer[BUFFER_SIZE];
+
+     printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU FILTRAGEM DE DADOS: \n\n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_RED "1 - Limpar critérios atuais? \n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_BLUE "2 - Escolher intervalo de tempo para análise? \n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_YELLOW "3 - Escolher mês para análise? \n" ANSI_COLOR_RESET);
+
+     printf("\n Escolha a opção: ");
+     while(1){
+           if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
+
+           if((sscanf(buffer,"%d",&_auxdf)==1)&&(0<_auxdf&&_auxdf<4)) break;
+           else (printf("Introduz um número associado a uma opção! : "));
+     }
+
+     return _auxdf;
+
+}
+
+int TemperatureHistory(int* T){
+     int _auxth=0;
+     char buffer[BUFFER_SIZE];
+
+     printf("Qual o valor de tempo (em anos) relativo ao período de amostragem que quer analisar? ");
+     scanf("%d", T);
+
+     printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU HISTÓRICO DE TEMPERATURAS: \n\n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_RED "1 - Análise global?\n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_GREEN "2 - Análise por país? \n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_CYAN "3 - Análise por cidade? \n" ANSI_COLOR_RESET);
+
+     printf("\n Escolha a opção: ");
+     while(1){
+           if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
+
+           if((sscanf(buffer,"%d",&_auxth)==1)&&(0<_auxth&&_auxth<4)) break;
+           else (printf("Introduz um número associado a uma opção! : "));
+     }
+
+     return _auxth;
 }
