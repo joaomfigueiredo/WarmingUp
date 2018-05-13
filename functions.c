@@ -1,5 +1,5 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "functions.h"
 #include "data.h"
@@ -8,78 +8,78 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
       int i=0, _mode=0;
       char *aux = NULL;
       if (argc!=6){
-            fprintf(stderr, "ERROR: Check parameters number of parameters.\n");
+            fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters number of parameters.\n");
             exit (-1);
       }
       for(i=1; i<6; i++){
 
             if (strcmp(argv[i], "-g")==0){
                   if (_mode!=0){
-                        fprintf(stderr, "ERROR: Check parameters (repeated definition -g).\n");
+                        fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (repeated definition -g).\n");
                         exit (-1);
                   }
                   _mode = GRAPHICAL;
                   continue;
             }
+
             else if (strcmp(argv[i], "-t")==0){
                   if (_mode!=0){
-                        fprintf(stderr, "ERROR: Check parameters (repeated definition -t).\n");
+                        fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (repeated definition -t).\n");
                         exit (-1);
                   }
                   _mode = TEXTUAL;
                   continue;
             }
+
             else if(i==5) break;
+
             else if ( (strcmp(argv[i], "-f1")) == 0 ){
                   if (files[0][0]!=0){
-                        fprintf(stderr, "ERROR: Check parameters (repeated definition -f1).\n");
+                        fprintf(stderr,ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (repeated definition -f1).\n");
                         exit (-1);
                   }
+
                   if( (aux = strrchr(argv[i+1],'.')) != NULL ) {
-                       if(strcmp(aux,".csv") == 0) {
-                             strcpy(files[0], argv[i+1]);
-                        }
-                    }
-                  else{
-                        fprintf(stderr, "ERROR: Check parameters (f1 isn't csv).\n");
-                        exit (-1);
+                        if(strcmp(aux,".csv") == 0)   strcpy(files[0], argv[i+1]);
+                        else  fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (f1 isn't csv).\n");
                   }
+                  else fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (f1 is missing file extension).\n");
+
                   i++;
                   continue;
             }
+
             else if ( (strcmp(argv[i], "-f2")) == 0){
                   if (files[1][0]!=0){
-                        fprintf(stderr, "ERROR: Check parameters (repeated definition -f2).\n");
+                        fprintf(stderr,ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (repeated definition -f2).\n");
                         exit (-1);
                   }
+
                   if( (aux = strrchr(argv[i+1],'.')) != NULL ) {
-                       if(strcmp(aux,".csv") == 0) {
-                             strcpy(files[1], argv[i+1]);
-                        }
-                    }
-                  else{
-                        fprintf(stderr, "ERROR: Check parameters (f2 isn't csv).\n");
-                        exit (-1);
+                        if(strcmp(aux,".csv") == 0)   strcpy(files[1], argv[i+1]);
+                        else  fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (f2 isn't csv).\n");
                   }
+                        else fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (f2 is missing file extension).\n");
+
                   i++;
                   continue;
             }
 
             else{
-                  printf ("WARNING: trouble with '%s'\n", argv[i]);
+                  printf ( ANSI_COLOR_WARNINGS "WARNING:" ANSI_COLOR_RESET "trouble with '%s'\n", argv[i]);
             }
 
       }
 
       if ( (_mode==0) || files[0][0]==0 || files[1][0]==0){
             if (_mode==0){
-                  fprintf(stderr, "ERROR: Check parameters (missing mode).\n");
+                  fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (missing mode).\n");
             }
             if (files[0][0]==0){
-                  fprintf(stderr, "ERROR: Check parameters (missing f1).\n");
+                  fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (missing f1).\n");
             }
             if (files[1][0]==0){
-                  fprintf(stderr, "ERROR: Check parameters (missing f2).\n");
+                  fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Check parameters (missing f2).\n");
             }
             exit (-1);
       }
@@ -90,29 +90,23 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
 
 void MenuSurfer(int* T, int* ano, int* months){
 
-      if ( MainMenu () == 1){
-
-           DataFilter();
-           return;
-      }
-
-
-      if ( MainMenu () == 2){
-
-           TemperatureHistory(T);
-           return;
-      }
-
-      if ( MainMenu () == 3){
-
-           YearTempAnalise(ano);
-           return;
-      }
-
-      if ( MainMenu() == 4){
-
-           GlobalTempAnalise(months);
-           return;
+      switch (MainMenu()) {
+                        case 0:
+                            break;
+                        case 1:
+                            DataFilter();
+                            break;
+                        case 2:
+                            TemperatureHistory(T);
+                            break;
+                        case 3:
+                            YearTempAnalise(ano);
+                            break;
+                        case 4:
+                            GlobalTempAnalise(months);
+                            break;
+                        default:
+                            break;
       }
 
 }
@@ -122,10 +116,10 @@ int MainMenu(){
       char buffer[BUFFER_SIZE];
 
       printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU PRINCIPAL: \n\n" ANSI_COLOR_RESET);
-      printf(ANSI_COLOR_BOLD_RED "1 - Seleção de dados \n" ANSI_COLOR_RESET);
+      printf(ANSI_COLOR_BOLD_WHITE "1 - Seleção de dados \n" ANSI_COLOR_RESET);
       printf(ANSI_COLOR_BOLD_BLUE "2 - Histórico de Temperaturas \n" ANSI_COLOR_RESET);
-      printf(ANSI_COLOR_BOLD_YELLOW "3 - Análise de temperatura por ano \n" ANSI_COLOR_RESET);
-      printf(ANSI_COLOR_BOLD_GREEN "4 - Análise de temperatura\n" ANSI_COLOR_RESET);
+      printf(ANSI_COLOR_BOLD_GREEN "3 - Análise de temperatura por ano \n" ANSI_COLOR_RESET);
+      printf(ANSI_COLOR_BOLD_CYAN "4 - Análise de temperatura\n" ANSI_COLOR_RESET);
       printf("\n Escolha a opção: ");
       while(1){
             if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
@@ -143,9 +137,9 @@ int DataFilter(){
      char buffer[BUFFER_SIZE];
 
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU FILTRAGEM DE DADOS: \n\n" ANSI_COLOR_RESET);
-     printf(ANSI_COLOR_BOLD_RED "1 - Limpar critérios atuais? \n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_WHITE "1 - Limpar critérios atuais? \n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_BLUE "2 - Escolher intervalo de tempo para análise? \n" ANSI_COLOR_RESET);
-     printf(ANSI_COLOR_BOLD_YELLOW "3 - Escolher mês para análise? \n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_GREEN "3 - Escolher mês para análise? \n" ANSI_COLOR_RESET);
 
      printf("\n Escolha a opção: ");
      while(1){
@@ -173,7 +167,7 @@ int TemperatureHistory(int* T){
      }
 
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU HISTÓRICO DE TEMPERATURAS: \n\n" ANSI_COLOR_RESET);
-     printf(ANSI_COLOR_BOLD_RED "1 - Análise global?\n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_WHITE "1 - Análise global?\n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_GREEN "2 - Análise por país? \n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_CYAN "3 - Análise por cidade? \n" ANSI_COLOR_RESET);
 
@@ -204,7 +198,7 @@ int YearTempAnalise(int* ano){
 
 
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU ANÁLISE DA TEMPERATURA POR ANO: \n\n" ANSI_COLOR_RESET);
-     printf(ANSI_COLOR_BOLD_YELLOW "1 - Análise por país? \n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_BLUE "1 - Análise por país? \n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_BLUE "2 - Análise por cidade? \n" ANSI_COLOR_RESET);
 
      printf("\n Escolha a opção: ");

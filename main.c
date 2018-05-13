@@ -13,7 +13,7 @@ int main(int argc, char *argv[]){
 
 
       mode = ParamReading(argc, argv, files);
-
+      printf("%s7end", files[1]);
       if (mode==TEXTUAL) MenuSurfer(&T, &ano, &months);
 
       printf("Temp %d\n\n", T);
