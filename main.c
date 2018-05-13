@@ -5,15 +5,20 @@
 
 int main(int argc, char *argv[]){
 
-      int mode=0;
+      int mode = 0;
+      int T = 0;
+      int ano = 0;
+      int months = 0;
       char files[2][50]={{0}};
-      int T=0;
+
 
       mode = ParamReading(argc, argv, files);
 
-      if (mode==TEXTUAL) MenuSurfer(&T);
+      if (mode==TEXTUAL) MenuSurfer(&T, &ano, &months);
 
-      printf("Temp %d", T);
+      printf("Temp %d\n\n", T);
+      printf("ano %d\n\n", ano);
+      printf("meses %d\n\n", months);
 
       return EXIT_SUCCESS;
 }
