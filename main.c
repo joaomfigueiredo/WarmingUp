@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "data.h"
 #include "functions.h"
+#include "lists.h"
 
 int main(int argc, char *argv[]){
 
@@ -11,10 +12,12 @@ int main(int argc, char *argv[]){
       int months = 0;
       char files[2][50]={{0}};
 
-
       mode = ParamReading(argc, argv, files);
+      LoadTempCountries();
       printf("%s7end", files[1]);
       if (mode==TEXTUAL) MenuSurfer(&T, &ano, &months);
+
+
 
       printf("Temp %d\n\n", T);
       printf("ano %d\n\n", ano);
