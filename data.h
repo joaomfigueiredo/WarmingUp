@@ -4,6 +4,7 @@
 #define TEXTUAL 1
 #define GRAPHICAL 2
 #define BUFFER_SIZE 200
+#define FILENAME_SIZE 50
 
 #define ANSI_COLOR_ERRORS "\033[1;91m"
 #define ANSI_COLOR_WARNINGS "\033[1;93m"
@@ -17,31 +18,38 @@
 #define ANSI_COLOR_RESET	"\x1b[0m"
 
 
-typedef struct{
+typedef struct date{
 	int day;
 	int month;
 	int year;
-} date;
+} date_t;
 
-typedef struct{
+typedef struct geo_coord{
 	float angle;
 	int hemisphere;
-}geo_coord;
+}geo_coord_t;
 
-typedef struct{
-	date dt;
+typedef struct data_temp{
+	int concatenated_date;
+	date_t dt;
 	float temperature;
 	float uncertainty;
 	char country[100];
 	char city[100];
-	geo_coord lat;
-	geo_coord longit;
-} data_temp;
+	geo_coord_t lat;
+	geo_coord_t longit;
+} data_temp_t;
 
 typedef struct node{
-	data_temp payload;
+	data_temp_t payload;
 	struct node *next;
 	struct node *prev;
 }node_t;
+
+typedef struct list{
+	node_t* head;
+	node_t* tail;
+}list_t;
+
 
 #endif

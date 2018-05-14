@@ -6,11 +6,10 @@
 #include "lists.h"
 
 
-void LoadTempCountries(){
-      int num_lines=0, ch, a=0;
+void LoadTempCountries(char file_countries[FILENAME_SIZE]){
       char buffer[BUFFER_SIZE]={0};
-      data_temp *country = NULL;
-      FILE* csv_countries = fopen("tempcountries.csv", "r");
+      data_temp_t* aux = NULL;
+      FILE* csv_countries = fopen(file_countries, "r");
 
       if (csv_countries==0){
             fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "OPENING FILE\n");
@@ -18,55 +17,52 @@ void LoadTempCountries(){
       }
 
       while (EOF != fscanf(csv_countries, "%1000[^\n]\n", buffer)) {
-            CountriesCsvToStruct(buffer, country, &a);
-            //a++;
-            if (a>100) exit (0);
-      }
+            aux = CountriesCsvToStruct(buffer);
 
+
+      }
+      PrintNode(aux->payload);
       fclose(csv_countries);
 }
 
-/*
-node_t* GetNewNode(char *_buffer){
-      node_t *newNode=NULL;
+
+node_t* GetNewNode(data_temp_t _aux){
+      node_t *newNode=NULL;struct node_t* head;
+      struct node_t* tail;
+
 
       newNode = (node_t*)malloc(sizeof(node_t));
       if (newNode == NULL){
             printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation");
             exit(EXIT_FAILURE);
       }
-      newNode-> payload=CountriesCsvToStruct(*_buffer);
+      newNode-> payload=_aux;
       newNode-> next = NULL;
       newNode-> prev = NULL;
       return newNode;
 }
-*/
 
-void CountriesCsvToStruct(char *_buffer, data_temp *country, int *_a){
+
+data_temp_t* CountriesCsvToStruct(char *_buffer){
       char *aux=NULL;
+      data_temp_t *aux_1=NULL;
 
-              aux = strtok(_buffer, "-");
-              if (atoi(aux)==0) return;
-              //printf("  %d-", atoi(aux));
-              aux = strtok(NULL, "-");
-              //printf("%d-", atoi(aux));
+              aux_1= (node_t*)malloc(sizeof(node_t));
+
+              aux = strtok(_buffer, ",");
+              sscanf(aux, "%d-%d-%d", &aux_1->dt.year,&aux_1->dt.month,&aux_1->dt.day);
               aux = strtok(NULL, ",");
-             // printf("%d -----", atoi(aux));
+              if (atof(aux)==0)   return 0;
+              aux_1->temperature = atof(aux);
               aux = strtok(NULL, ",");
-                    if (atof(aux)==0) {
-                          *_a=*_a+1;
-                          printf("EMPTY _ %d\n",*_a);
-
-
-
-            //  printf("temp %f  ", atof(aux));
-              aux = strtok(NULL, ",");
-            //  printf("unc %f  ", atof(aux));
+              if (atof(aux)==0)   return 0;
+	        aux_1->uncertainty = atof(aux);
               aux = strtok(NULL, "\n");
-              printf(" %s \n", (aux));
+              strcpy(aux_1->country, aux);
 
-      }
-      printf(" %s \n", (aux));
+      return aux_1;
+}
 
-//      return country[0];
+void PrintNode(data_temp_t aux){
+      printf("%d-%d-%d\n",aux.dt.year, aux.dt.month, aux.dt.day );
 }

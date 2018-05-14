@@ -4,9 +4,10 @@
 #include "data.h"
 
 node_t* NewCountryNode(int);
-void LoadTempCountries();
+void LoadTempCountries(char [50]);
 node_t* GetNewNode(char *);
-void CountriesCsvToStruct(char *, data_temp *, int *);
+node_t* CountriesCsvToStruct(char *, data_temp_t *, int *);
+void PrintNode(data_temp_t);
 
 
 #endif

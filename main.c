@@ -10,10 +10,10 @@ int main(int argc, char *argv[]){
       int T = 0;
       int ano = 0;
       int months = 0;
-      char files[2][50]={{0}};
+      char files[2][FILENAME_SIZE]={{0}};
 
       mode = ParamReading(argc, argv, files);
-      LoadTempCountries();
+      LoadTempCountries(files[0]);
       printf("%s7end", files[1]);
       if (mode==TEXTUAL) MenuSurfer(&T, &ano, &months);
 
