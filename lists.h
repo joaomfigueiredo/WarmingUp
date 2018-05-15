@@ -5,9 +5,10 @@
 
 node_t* NewCountryNode(int);
 void LoadTempCountries(char [50]);
-node_t* GetNewNode(char *);
-node_t* CountriesCsvToStruct(char *, data_temp_t *, int *);
+node_t* GenNewNode(data_temp_t);
+data_temp_t* CountriesCsvToStruct(char *);
 void PrintNode(data_temp_t);
-
+void sortedInsert(list_t **, node_t *);
+void insertionSort(data_temp_t , list_t *);
 
 #endif
