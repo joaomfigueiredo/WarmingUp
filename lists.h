@@ -13,4 +13,6 @@ void PrintCompleteNode(node_t);
 void sortedInsert(list_t *, node_t *);
 void insertionSort(data_temp_t , list_t *);
 
+void TreetoList(node_t *);
+
 #endif

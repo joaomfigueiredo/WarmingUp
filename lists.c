@@ -21,14 +21,16 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
             exit (0);
       }
 
-      while (EOF != fscanf(csv_countries, "%1000[^\n]\n", buffer)) {
+      while (NULL != fgets(buffer,BUFFER_SIZE,csv_countries)) {
             aux = CountriesCsvToStruct(buffer);
             if (aux->temperature==ERRORCODE) continue;
             //GenNewNode(*aux);
             insertionSort(*aux, extremes_countries);
       //      PrintNode(*aux);
        }
-       
+
+       TreetoList(extremes_countries->head);
+
       fclose(csv_countries);
 }
 
@@ -114,7 +116,7 @@ void sortedInsert(list_t *extremes_countries, node_t *_newNode){
 
       if(curr == NULL){
         extremes_countries->head = _newNode;
-        return;        
+        return;
       }
 
 
@@ -134,7 +136,7 @@ void sortedInsert(list_t *extremes_countries, node_t *_newNode){
       }else{
         prev->next = _newNode;
       }
-      
+
 
       _newNode->next = curr;
 }
@@ -146,5 +148,18 @@ void insertionSort(data_temp_t newNodeDATA, list_t *extremes_countries){
       newNode=GenNewNode(newNodeDATA);
 
       sortedInsert(extremes_countries, newNode);
+
+
+}
+
+void TreetoList(node_t* root){
+      if(root->prev!=NULL)    TreetoList(root->prev);
+
+      PrintCompleteNode(*root);
+
+
+      if(root->next!=NULL) TreetoList(root->next);
+
+
 
 }
