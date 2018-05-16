@@ -12,6 +12,10 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
 
       FILE* csv_countries = fopen(file_countries, "r");
 
+      extremes_countries = (list_t*)malloc(sizeof(list_t));
+
+
+
       if (csv_countries==0){
             fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "OPENING FILE\n");
             exit (0);
@@ -20,11 +24,11 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
       while (EOF != fscanf(csv_countries, "%1000[^\n]\n", buffer)) {
             aux = CountriesCsvToStruct(buffer);
             if (aux->temperature==ERRORCODE) continue;
-            PrintNode(*aux);
-            GenNewNode(*aux);
-            //insertionSort(*aux, extremes_countries);
+            //GenNewNode(*aux);
+            insertionSort(*aux, extremes_countries);
+      //      PrintNode(*aux);
        }
-
+       
       fclose(csv_countries);
 }
 
@@ -71,6 +75,13 @@ void PrintNode(data_temp_t aux){ //so pa imprimir cada um por data
       printf("_____%s\n", aux.country);
 }
 
+void PrintCompleteNode(node_t aux){ //so pa imprimir cada um por data
+      printf("%d-%d-%d",aux.payload.dt.year, aux.payload.dt.month, aux.payload.dt.day );
+      printf("_______TEMP - %f", aux.payload.temperature );
+      printf("_______UNC - %f", aux.payload.uncertainty );
+      printf("_____%s\n", aux.payload.country);
+}
+
 node_t* GenNewNode(data_temp_t _aux){
       node_t *newNode=NULL;
       //struct node_t* head;
@@ -83,43 +94,46 @@ node_t* GenNewNode(data_temp_t _aux){
             exit(EXIT_FAILURE);
       }
 
-      newNode-> payload =_aux;
+      newNode-> payload = _aux;
       newNode-> next = NULL;
       newNode-> prev = NULL;
 
       return newNode;
 }
 
+
 void sortedInsert(list_t *extremes_countries, node_t *_newNode){
-      node_t *aux= NULL;
+      node_t *curr = NULL;
+      node_t *prev = NULL;
       //se a lista estiver vazia
       // ou se for necessário inserir antes do 1º elemento da lista
+      //printf("________%d__________\n", ((extremes_countries)->head==NULL  ));
+      //PrintCompleteNode(*_newNode);
 
-      if ( ( (*extremes_countries).head==NULL) || (extremes_countries->head->next->payload.concatenated_date >= _newNode->payload.concatenated_date)){
-            _newNode->next=extremes_countries->head;
-            extremes_countries->head =_newNode;
+      curr = extremes_countries->head;
+
+      while (curr != NULL){
+            if (_newNode-> payload.concatenated_date < curr->payload.concatenated_date) break;
+
+            prev=curr;
+            curr=curr->next;
       }
-      else{
-            aux=extremes_countries->head;
-            while(aux->next != NULL && aux->next->payload.concatenated_date < _newNode->payload.concatenated_date)  aux=aux->next;
-            if (aux->next == NULL)  extremes_countries -> tail = aux;
-            _newNode->next= aux->next;
-            aux->next=_newNode;
+
+      if (prev==NULL){
+            extremes_countries->head=_newNode;
+      }else{
+            prev->next=_newNode;
       }
+
+      _newNode->next = curr;
 }
 
+
 void insertionSort(data_temp_t newNodeDATA, list_t *extremes_countries){
-
       node_t *newNode = NULL;
-    //  node_t *tmp = NULL;
-  //    node_t *sortedHead = NULL;//representa a head da lista ordenada
 
-      newNode->payload = newNodeDATA;
+      newNode=GenNewNode(newNodeDATA);
 
-  //    while (aux!=NULL){
-      //0       tmp = aux->next;
-            sortedInsert(extremes_countries, newNode);
-            //          aux=tmp;
-    //    }
-  //    extremes_countries->head  = sortedHead;
+      sortedInsert(extremes_countries, newNode);
+
 }
