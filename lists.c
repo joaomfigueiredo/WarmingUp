@@ -13,7 +13,7 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
       FILE* csv_countries = fopen(file_countries, "r");
 
       extremes_countries = (list_t*)malloc(sizeof(list_t));
-
+      extremes_countries->head = NULL;
 
 
       if (csv_countries==0){
@@ -112,18 +112,29 @@ void sortedInsert(list_t *extremes_countries, node_t *_newNode){
 
       curr = extremes_countries->head;
 
+      if(curr == NULL){
+        extremes_countries->head = _newNode;
+        return;        
+      }
+
+
       while (curr != NULL){
-            if (_newNode-> payload.concatenated_date < curr->payload.concatenated_date) break;
 
-            prev=curr;
-            curr=curr->next;
+            if (_newNode->payload.concatenated_date < curr->payload.concatenated_date){
+              prev = curr;
+              curr = curr->prev;
+            }else{
+              prev = curr;
+              curr = curr->next;
+            }
       }
 
-      if (prev==NULL){
-            extremes_countries->head=_newNode;
+      if (_newNode->payload.concatenated_date < prev->payload.concatenated_date){
+          prev->prev = _newNode;
       }else{
-            prev->next=_newNode;
+        prev->next = _newNode;
       }
+      
 
       _newNode->next = curr;
 }
