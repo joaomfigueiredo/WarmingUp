@@ -21,7 +21,8 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
             aux = CountriesCsvToStruct(buffer);
             if (aux->temperature==ERRORCODE) continue;
             PrintNode(*aux);
-            insertionSort(*aux, extremes_countries);
+            GenNewNode(*aux);
+            //insertionSort(*aux, extremes_countries);
        }
 
       fclose(csv_countries);
@@ -89,13 +90,13 @@ node_t* GenNewNode(data_temp_t _aux){
       return newNode;
 }
 
-void sortedInsert(list_t **extremes_countries, node_t *_newNode){
+void sortedInsert(list_t *extremes_countries, node_t *_newNode){
       node_t *aux= NULL;
       //se a lista estiver vazia
       // ou se for necessário inserir antes do 1º elemento da lista
 
-      if ( (extremes_countries.head==NULL) || (extremes_countries.head->next.payload.concatenated_date >= _newNode->payload.concatenated_date)){
-            _newNode->next=*_head;
+      if ( ( (*extremes_countries).head==NULL) || (extremes_countries->head->next->payload.concatenated_date >= _newNode->payload.concatenated_date)){
+            _newNode->next=extremes_countries->head;
             extremes_countries->head =_newNode;
       }
       else{
@@ -117,7 +118,7 @@ void insertionSort(data_temp_t newNodeDATA, list_t *extremes_countries){
 
   //    while (aux!=NULL){
       //0       tmp = aux->next;
-            sortedInsert(&extremes_countries, newNode);
+            sortedInsert(extremes_countries, newNode);
             //          aux=tmp;
     //    }
   //    extremes_countries->head  = sortedHead;
