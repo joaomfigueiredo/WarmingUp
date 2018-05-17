@@ -6,7 +6,7 @@
 node_t* NewCountryNode(int);
 void LoadTempCountries(char [50]);
 tree_node_t* GenNewNode(data_temp_t);
-data_temp_t* CountriesCsvToStruct(char *);
+data_temp_t* CountriesCsvToStruct(char *, data_temp_t *);
 void PrintNode(data_temp_t);
 void PrintCompleteNode(node_t);
 

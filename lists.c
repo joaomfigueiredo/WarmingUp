@@ -7,8 +7,9 @@
 
 void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheiro começando numa linha, depois diz q o aux = ao que a funçao
       list_t* extremes_countries = NULL;
-      char buffer[BUFFER_SIZE]={0};                         //countriescsvto truck retorna que é a linha num tipo de estrutura e vai continuan
-      data_temp_t* aux = NULL;     // ate fazer as linhas todas
+      char buffer[BUFFER_SIZE]={0};
+      data_temp_t *aux = NULL;
+      data_temp_t *aux_csv_line=NULL;
 
       FILE* csv_countries = fopen(file_countries, "r");
 
@@ -16,6 +17,7 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
       extremes_countries->head = NULL;
       extremes_countries->tail = NULL;
       extremes_countries->root = NULL;
+      aux_csv_line = (data_temp_t*)malloc(sizeof(data_temp_t));
 
       if (csv_countries==0){
             fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "OPENING FILE\n");
@@ -23,25 +25,22 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
       }
 
       while (NULL != fgets(buffer,BUFFER_SIZE,csv_countries)) {
-            aux = CountriesCsvToStruct(buffer);
+            aux = CountriesCsvToStruct(buffer, aux_csv_line);
             if (aux->temperature==ERRORCODE) continue;
-            //GenNewNode(*aux);
             insertionSort(*aux, extremes_countries);
-      //      PrintNode(*aux);
        }
 
        TreetoList(extremes_countries->root, extremes_countries);
 
        PrintList(extremes_countries->head);
 
-      fclose(csv_countries);
+       free(aux_csv_line);
+       free(extremes_countries);
+       fclose(csv_countries);
 }
 
-data_temp_t* CountriesCsvToStruct(char *_buffer){ //define cada linha do txt no tipo de estrutura data_temp_t
+data_temp_t* CountriesCsvToStruct(char *_buffer, data_temp_t* aux_1){ //define cada linha do txt no tipo de estrutura data_temp_t
       char *aux=NULL;
-      data_temp_t *aux_1=NULL;
-
-              aux_1 = (data_temp_t*)malloc(sizeof(data_temp_t));
 
               aux = strtok(_buffer, ",");
               if (atof(aux)==0){
@@ -64,8 +63,6 @@ data_temp_t* CountriesCsvToStruct(char *_buffer){ //define cada linha do txt no 
 	            aux_1->uncertainty = atof(aux);
               aux = strtok(NULL, "\n");
               strcpy(aux_1->country, aux);
-            //DEVE SER LIBERTADA?? AIND ANAO FI GUARDADO O VALOR
-            //  free(aux_1);
 
       return aux_1;
 
@@ -73,14 +70,14 @@ data_temp_t* CountriesCsvToStruct(char *_buffer){ //define cada linha do txt no 
 
 }
 
-void PrintNode(data_temp_t aux){ //so pa imprimir cada um por data
+void PrintNode(data_temp_t aux){
       printf("%d-%d-%d",aux.dt.year, aux.dt.month, aux.dt.day );
       printf("_______TEMP - %f", aux.temperature );
       printf("_______UNC - %f", aux.uncertainty );
       printf("_____%s\n", aux.country);
 }
 
-void PrintCompleteNode(node_t aux){ //so pa imprimir cada um por data
+void PrintCompleteNode(node_t aux){
       printf("%d-%d-%d",aux.payload.dt.year, aux.payload.dt.month, aux.payload.dt.day );
       printf("_______TEMP - %f", aux.payload.temperature );
       printf("_______UNC - %f", aux.payload.uncertainty );
@@ -89,8 +86,6 @@ void PrintCompleteNode(node_t aux){ //so pa imprimir cada um por data
 
 tree_node_t* NewTreeNode(data_temp_t _aux){
       tree_node_t *newNode=NULL;
-      //struct node_t* head;
-      //struct node_t* tail;
 
       newNode = (tree_node_t*)malloc(sizeof(tree_node_t));
 
@@ -108,8 +103,6 @@ tree_node_t* NewTreeNode(data_temp_t _aux){
 
 node_t* NewListNode(data_temp_t _aux){
       node_t *newNode=NULL;
-      //struct node_t* head;
-      //struct node_t* tail;
 
       newNode = (node_t*)malloc(sizeof(node_t));
 
@@ -162,6 +155,7 @@ void insertionSort(data_temp_t newNodeDATA, list_t *extremes_countries){
 
       newNode=NewTreeNode(newNodeDATA);
 
+
       sortedInsert(extremes_countries, newNode);
 
 
@@ -173,6 +167,7 @@ void TreetoList(tree_node_t* root, list_t* _extremes_countries){
       insertListTail(root, _extremes_countries);
 
       if(root->right!=NULL) TreetoList(root->right,_extremes_countries);
+      free(root);
 }
 
 void insertListTail(tree_node_t* node_to_insert, list_t* _extremes_countries){
@@ -190,7 +185,6 @@ void insertListTail(tree_node_t* node_to_insert, list_t* _extremes_countries){
             newNode->prev=_extremes_countries->tail;
             _extremes_countries->tail=newNode;
       }
-
 }
 
 void PrintList(node_t *_head){
@@ -199,7 +193,9 @@ void PrintList(node_t *_head){
       while(aux->next != NULL){
             PrintCompleteNode(*aux);
             aux=aux->next;
+            free(aux->prev);
       }
-      //printf("%d", aux->prev);
-      printf("\n");
+      free(aux);
+
+
 }
