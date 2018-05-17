@@ -47,10 +47,16 @@ typedef struct node{
 	struct node *prev;
 }node_t;
 
+typedef struct tree_node{
+	data_temp_t payload;
+	struct tree_node *right;
+	struct tree_node *left;
+}tree_node_t;
+
 typedef struct list{
 	node_t* head;
 	node_t* tail;
+	tree_node_t* root;
 }list_t;
-
 
 #endif
