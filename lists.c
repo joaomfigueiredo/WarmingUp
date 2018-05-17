@@ -5,7 +5,7 @@
 #include "data.h"
 #include "lists.h"
 
-void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheiro começando numa linha, depois diz q o aux = ao que a funçao
+void LoadTempCountries(char file_countries[FILENAME_SIZE]){
       list_t* extremes_countries = NULL;
       char buffer[BUFFER_SIZE]={0};
       data_temp_t *aux = NULL;
@@ -13,21 +13,21 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
 
       FILE* csv_countries = fopen(file_countries, "r");
 
+      if (csv_countries==0){
+            fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "OPENING FILE\n");
+            exit (0);
+      }
+
       extremes_countries = (list_t*)malloc(sizeof(list_t));
       extremes_countries->head = NULL;
       extremes_countries->tail = NULL;
       extremes_countries->root = NULL;
       aux_csv_line = (data_temp_t*)malloc(sizeof(data_temp_t));
 
-      if (csv_countries==0){
-            fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "OPENING FILE\n");
-            exit (0);
-      }
-
       while (NULL != fgets(buffer,BUFFER_SIZE,csv_countries)) {
             aux = CountriesCsvToStruct(buffer, aux_csv_line);
             if (aux->temperature==ERRORCODE) continue;
-            insertionSort(*aux, extremes_countries);
+            TreeLoader(*aux, extremes_countries);
        }
 
        TreetoList(extremes_countries->root, extremes_countries);
@@ -39,34 +39,32 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){ //carrega do ficheir
        fclose(csv_countries);
 }
 
-data_temp_t* CountriesCsvToStruct(char *_buffer, data_temp_t* aux_1){ //define cada linha do txt no tipo de estrutura data_temp_t
+data_temp_t* CountriesCsvToStruct(char *_buffer, data_temp_t* _aux_csv_line){
       char *aux=NULL;
 
               aux = strtok(_buffer, ",");
               if (atof(aux)==0){
-                  aux_1->temperature = ERRORCODE;
-                  return aux_1;
+                  _aux_csv_line->temperature = ERRORCODE;
+                  return _aux_csv_line;
               }
-              sscanf(aux, "%d-%d-%d", &aux_1->dt.year,&aux_1->dt.month,&aux_1->dt.day);
-              aux_1->concatenated_date=10000*aux_1->dt.year+100*aux_1->dt.month+aux_1->dt.day;
+              sscanf(aux, "%d-%d-%d", &_aux_csv_line->dt.year,&_aux_csv_line->dt.month,&_aux_csv_line->dt.day);
+              _aux_csv_line->concatenated_date=10000*_aux_csv_line->dt.year+100*_aux_csv_line->dt.month+_aux_csv_line->dt.day;
               aux = strtok(NULL, ",");
               if (atof(aux)==0){
-                  aux_1->temperature = ERRORCODE;
-                  return aux_1;
+                  _aux_csv_line->temperature = ERRORCODE;
+                  return _aux_csv_line;
               }
-              aux_1->temperature = atof(aux);
+              _aux_csv_line->temperature = atof(aux);
               aux = strtok(NULL, ",");
               if (atof(aux)==0){
-                  aux_1->temperature = ERRORCODE;
-                  return aux_1;
+                  _aux_csv_line->temperature = ERRORCODE;
+                  return _aux_csv_line;
               }
-	            aux_1->uncertainty = atof(aux);
+	            _aux_csv_line->uncertainty = atof(aux);
               aux = strtok(NULL, "\n");
-              strcpy(aux_1->country, aux);
+              strcpy(_aux_csv_line->country, aux);
 
-      return aux_1;
-
-
+      return _aux_csv_line;
 
 }
 
@@ -118,8 +116,7 @@ node_t* NewListNode(data_temp_t _aux){
       return newNode;
 }
 
-
-void sortedInsert(list_t *extremes_countries, tree_node_t *_newNode){
+void TreeBuilder(list_t *extremes_countries, tree_node_t *_newNode){
       tree_node_t *curr = NULL;
 
       curr = extremes_countries->root;
@@ -128,7 +125,6 @@ void sortedInsert(list_t *extremes_countries, tree_node_t *_newNode){
         extremes_countries->root = _newNode;
         return;
       }
-
 
       while (curr != NULL){
             if (_newNode->payload.concatenated_date < curr->payload.concatenated_date){
@@ -146,32 +142,25 @@ void sortedInsert(list_t *extremes_countries, tree_node_t *_newNode){
                   curr = curr->right;
             }
       }
-
 }
 
-
-void insertionSort(data_temp_t newNodeDATA, list_t *extremes_countries){
+void TreeLoader(data_temp_t newNodeDATA, list_t *extremes_countries){
       tree_node_t *newNode = NULL;
 
       newNode=NewTreeNode(newNodeDATA);
-
-
-      sortedInsert(extremes_countries, newNode);
-
-
+      TreeBuilder(extremes_countries, newNode);
 }
 
 void TreetoList(tree_node_t* root, list_t* _extremes_countries){
       if(root->left!=NULL)    TreetoList(root->left,_extremes_countries);
 
-      insertListTail(root, _extremes_countries);
+      insertListTail_fromtree(root, _extremes_countries);
 
       if(root->right!=NULL) TreetoList(root->right,_extremes_countries);
       free(root);
 }
 
-void insertListTail(tree_node_t* node_to_insert, list_t* _extremes_countries){
-
+void insertListTail_fromtree(tree_node_t* node_to_insert, list_t* _extremes_countries){
       node_t *newNode = NULL;
 
       newNode=NewListNode(node_to_insert->payload);
@@ -195,7 +184,6 @@ void PrintList(node_t *_head){
             aux=aux->next;
             free(aux->prev);
       }
+
       free(aux);
-
-
 }

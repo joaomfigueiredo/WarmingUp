@@ -3,18 +3,19 @@
 
 #include "data.h"
 
-node_t* NewCountryNode(int);
+
 void LoadTempCountries(char [50]);
-tree_node_t* GenNewNode(data_temp_t);
+
 data_temp_t* CountriesCsvToStruct(char *, data_temp_t *);
+tree_node_t* NewTreeNode(data_temp_t);
+node_t* NewListNode(data_temp_t);
+
 void PrintNode(data_temp_t);
 void PrintCompleteNode(node_t);
-
-void sortedInsert(list_t *, tree_node_t *);
-void insertionSort(data_temp_t , list_t *);
-
+void TreeBuilder(list_t *, tree_node_t *);
+void TreeLoader(data_temp_t , list_t *);
 void TreetoList(tree_node_t *, list_t *);
-void insertListTail(tree_node_t*, list_t*);
+void insertListTail_fromtree(tree_node_t*, list_t*);
 void PrintList(node_t*);
 
 
