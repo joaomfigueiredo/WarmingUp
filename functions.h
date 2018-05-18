@@ -3,7 +3,7 @@
 
 #include "data.h"
 
-void myscannoerrorsforintnum ( int, int, int);
+void myscanint ( int*, int, int);
 int ParamReading(int, char *[], char [2][50]);
 void MenuSurfer(int*, int*, int*, int*, int*);
 int MainMenu();
