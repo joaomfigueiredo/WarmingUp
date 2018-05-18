@@ -11,6 +11,9 @@
 #define COUNTRIES 0
 #define CITIES 1
 
+#define MAX_WORD 100
+#define MAX_STR 1000
+
 #define ANSI_COLOR_ERRORS "\033[1;91m"
 #define ANSI_COLOR_WARNINGS "\033[1;93m"
 #define ANSI_COLOR_BOLD_RED "\033[1;31m"

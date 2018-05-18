@@ -4,6 +4,36 @@
 #include "functions.h"
 #include "data.h"
 
+void myscannoerrorsforintnum ( int _aux, int _min, int _max){
+
+     char buffer[BUFFER_SIZE] = {0};
+
+     while(1){
+           if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
+
+           if((sscanf(buffer,"%d",&_aux)==1)&&(_min<_aux&&_aux<_max)) break;
+           else (printf("Introduz um número associado a uma opção! : "));
+     }
+}
+
+/*int myscannoerrorsforintvecs (int _vector[MAX_STR], int strsize, int _min, int _max ){
+
+     int i = 0;
+     char buffer[BUFFER_SIZE] = {0};
+
+     for (i = 0; i < strsize; i++){
+          printf("Introduza a partir de que %s quer analisar os dados: ", request_df[i]);
+          while(1){
+                if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
+
+                if((sscanf(buffer,"%d",&_vector[i])==1)&&(_min<_vector[i]&&vector[i]<_max)) break;
+                else (printf("Introduz um número entre <gama>! : "));
+           }
+     }
+}
+*/
+
+
 int ParamReading(int argc, char *argv[], char files[2][50]){
       int i=0, _mode=0;
       char *aux = NULL;
@@ -87,21 +117,28 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
       return _mode;
 }
 
-void MenuSurfer(int* T, int* ano, int* months){
+void MenuSurfer(int* T, int* ano, int* months, int* aux_df, int* aux_ms){
 
       switch (MainMenu()) {
                         case 0:
                             break;
                         case 1:
-                            DataFilter();
+                            *aux_ms = 0;
+                            *aux_df = DataFilter();
                             break;
                         case 2:
+                            *aux_ms = 1;
+                            *aux_df = 0;
                             TemperatureHistory(T);
                             break;
                         case 3:
+                            *aux_ms = 1;
+                            *aux_df = 0;
                             YearTempAnalise(ano);
                             break;
                         case 4:
+                            *aux_ms = 1;
+                            *aux_df = 0;
                             GlobalTempAnalise(months);
                             break;
                         default:
