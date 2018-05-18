@@ -4,14 +4,14 @@
 #include "functions.h"
 #include "data.h"
 
-void myscannoerrorsforintnum ( int _aux, int _min, int _max){
+void myscanint ( int* _aux, int _min, int _max){
 
      char buffer[BUFFER_SIZE] = {0};
 
      while(1){
            if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
 
-           if((sscanf(buffer,"%d",&_aux)==1)&&(_min<_aux&&_aux<_max)) break;
+           if((sscanf(buffer,"%d",_aux)==1)&&((_min<*_aux)&&(*_aux<_max))) break;
            else (printf("Introduz um número associado a uma opção! : "));
      }
 }
@@ -137,6 +137,7 @@ void MenuSurfer(int* T, int* ano, int* months, int* aux_df, int* aux_ms){
                             YearTempAnalise(ano);
                             break;
                         case 4:
+
                             *aux_ms = 1;
                             *aux_df = 0;
                             GlobalTempAnalise(months);
@@ -170,37 +171,25 @@ int MainMenu(){
 int DataFilter(){
 
      int _auxdf = 0;
-     char buffer[BUFFER_SIZE];
-
+     printf(" auxdf %d", _auxdf);
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU FILTRAGEM DE DADOS: \n\n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_WHITE "1 - Limpar critérios atuais? \n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_BLUE "2 - Escolher intervalo de tempo para análise? \n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_GREEN "3 - Escolher mês para análise? \n" ANSI_COLOR_RESET);
 
      printf("\n Escolha a opção: ");
-     while(1){
-           if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
+     myscanint (&_auxdf, 0, 4);
 
-           if((sscanf(buffer,"%d",&_auxdf)==1)&&(0<_auxdf&&_auxdf<4)) break;
-           else (printf("Introduz um número associado a uma opção! : "));
-     }
-
+     printf(" auxdf %d", _auxdf);
      return _auxdf;
 
 }
 
 int TemperatureHistory(int* T){
      int _auxth=0;
-     char buffer[BUFFER_SIZE];
-     char buffer2[BUFFER_SIZE];
 
      printf("Qual o valor de tempo (em anos) relativo ao período de amostragem que quer analisar? ");
-     while(1){
-           if(fgets(buffer2, BUFFER_SIZE, stdin)==NULL) exit(-1);
-
-           if((sscanf(buffer2,"%d",T)==1)&&(1800 < *T && *T< 2018)) break;
-           else (printf("Introduz um valor na gama permitida! : "));
-     }
+     myscanint ( T, 0, 500);
 
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU HISTÓRICO DE TEMPERATURAS: \n\n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_WHITE "1 - Análise global?\n" ANSI_COLOR_RESET);
@@ -208,12 +197,7 @@ int TemperatureHistory(int* T){
      printf(ANSI_COLOR_BOLD_CYAN "3 - Análise por cidade? \n" ANSI_COLOR_RESET);
 
      printf("\n Escolha a opção: ");
-     while(1){
-           if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
-
-           if((sscanf(buffer,"%d",&_auxth)==1)&&(0<_auxth&&_auxth<4)) break;
-           else (printf("Introduz um número associado a uma opção! : "));
-     }
+     myscanint ( &_auxth, 0, 4);
 
      return _auxth;
 }
@@ -221,16 +205,9 @@ int TemperatureHistory(int* T){
 int YearTempAnalise(int* ano){
 
      int _auxyta=0;
-     char buffer[BUFFER_SIZE];
-     char buffer2[BUFFER_SIZE];
 
      printf("Qual o ano que pretende analisar? ");
-     while(1){
-           if(fgets(buffer2, BUFFER_SIZE, stdin)==NULL) exit(-1);
-
-           if((sscanf(buffer2,"%d",ano)==1)&&(1800 < *ano && *ano< 2018)) break; //valor tmb n mt certo digo eu
-           else (printf("Introduz um valor na gama permitida! : "));
-     }
+     myscanint ( ano, 1700, 2018);
 
 
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU ANÁLISE DA TEMPERATURA POR ANO: \n\n" ANSI_COLOR_RESET);
@@ -238,27 +215,16 @@ int YearTempAnalise(int* ano){
      printf(ANSI_COLOR_BOLD_BLUE "2 - Análise por cidade? \n" ANSI_COLOR_RESET);
 
      printf("\n Escolha a opção: ");
-     while(1){
-           if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
-
-           if((sscanf(buffer,"%d",&_auxyta)==1)&&(0 <_auxyta&&_auxyta< 3)) break;
-           else (printf("Introduz um número associado a uma opção! : "));
-     }
+     myscanint ( &_auxyta, 0, 3);
 
      return _auxyta;
 }
 
 int GlobalTempAnalise(int* months){
-
-     char buffer[BUFFER_SIZE];  //ESTA FUNÇÃO PODERÁ SER VOID DEPENDENDO DO RUMO DO PROGRAMA MAS VEREMOS DEPOIS
+     //ESTA FUNÇÃO PODERÁ SER VOID DEPENDENDO DO RUMO DO PROGRAMA MAS VEREMOS DEPOIS
 
      printf("Quantos meses pretende utilizar no cálculo do MA? ");
-     while(1){
-           if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
-
-           if((sscanf(buffer,"%d",months)==1)&&(0 < *months && *months < 1000)) break; //valor random deve ter que se alocar dinamicly?
-           else (printf("Introduz um valor na gama permitida! : "));
-     }
+     myscanint ( months, 0, 1000);
 
      return EXIT_SUCCESS;
 

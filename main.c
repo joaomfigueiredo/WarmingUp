@@ -37,14 +37,14 @@ int main(int argc, char *argv[]){
             }
 
       fprintf(stderr,ANSI_COLOR_WARNINGS "LOADING AND SORTING COUNTRIES" ANSI_COLOR_RESET);
-      LoadTempCountries(files[0], extremes_countries);
+     // LoadTempCountries(files[0], extremes_countries);
       fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCOUNTRIES ARE NOW LOADED AND SORTED\n" ANSI_COLOR_RESET);
 
 
 
 
       fprintf(stderr,"LOADING AND SORTING CITIES");
-      LoadTempCities(files[1], extremes_cities);
+      //LoadTempCities(files[1], extremes_cities);
       fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCITIES ARE NOW LOADED AND SORTED" ANSI_COLOR_RESET);
 
       if (mode==TEXTUAL){
