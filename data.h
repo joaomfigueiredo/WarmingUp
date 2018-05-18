@@ -7,6 +7,10 @@
 #define FILENAME_SIZE 50
 #define ERRORCODE 20180502
 
+
+#define COUNTRIES 0
+#define CITIES 1
+
 #define ANSI_COLOR_ERRORS "\033[1;91m"
 #define ANSI_COLOR_WARNINGS "\033[1;93m"
 #define ANSI_COLOR_BOLD_RED "\033[1;31m"
@@ -27,11 +31,11 @@ typedef struct date{
 
 typedef struct geo_coord{
 	float angle;
-	int hemisphere;
+	char hemisphere;
 }geo_coord_t;
 
 typedef struct data_temp{
-	int concatenated_date;
+	int ordering_identifier;
 	date_t dt;
 	float temperature;
 	float uncertainty;

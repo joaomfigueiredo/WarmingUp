@@ -4,19 +4,23 @@
 #include "data.h"
 
 
-void LoadTempCountries(char [50]);
+void LoadTempCountries(char [50], list_t*);
+void LoadTempCities(char [50],list_t*);
 
-data_temp_t* CountriesCsvToStruct(char *, data_temp_t *);
+data_temp_t* CsvToStruct(char *, data_temp_t *, int);
 tree_node_t* NewTreeNode(data_temp_t);
 node_t* NewListNode(data_temp_t);
 
 void PrintNode(data_temp_t);
-void PrintCompleteNode(node_t);
+void PrintCompleteNode(node_t, int);
 void TreeBuilder(list_t *, tree_node_t *);
 void TreeLoader(data_temp_t , list_t *);
 void TreetoList(tree_node_t *, list_t *);
 void insertListTail_fromtree(tree_node_t*, list_t*);
-void PrintList(node_t*);
+void PrintList(node_t*, int);
 
+int CountCities(node_t *);
+
+void freeList(node_t*);
 
 #endif

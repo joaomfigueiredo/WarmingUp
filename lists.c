@@ -5,8 +5,9 @@
 #include "data.h"
 #include "lists.h"
 
-void LoadTempCountries(char file_countries[FILENAME_SIZE]){
-      list_t* extremes_countries = NULL;
+
+void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_countries ){
+      int filetype=COUNTRIES;
       char buffer[BUFFER_SIZE]={0};
       data_temp_t *aux = NULL;
       data_temp_t *aux_csv_line=NULL;
@@ -14,58 +15,157 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE]){
       FILE* csv_countries = fopen(file_countries, "r");
 
       if (csv_countries==0){
-            fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "OPENING FILE\n");
+            fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "OPENING COUNTRIES FILE\n");
             exit (0);
       }
 
-      extremes_countries = (list_t*)malloc(sizeof(list_t));
       extremes_countries->head = NULL;
       extremes_countries->tail = NULL;
       extremes_countries->root = NULL;
+
       aux_csv_line = (data_temp_t*)malloc(sizeof(data_temp_t));
+      if (aux_csv_line == NULL){
+            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation");
+            exit(EXIT_FAILURE);
+      }
 
       while (NULL != fgets(buffer,BUFFER_SIZE,csv_countries)) {
-            aux = CountriesCsvToStruct(buffer, aux_csv_line);
+            aux = CsvToStruct(buffer, aux_csv_line, filetype);
             if (aux->temperature==ERRORCODE) continue;
             TreeLoader(*aux, extremes_countries);
        }
 
        TreetoList(extremes_countries->root, extremes_countries);
 
-       PrintList(extremes_countries->head);
-
        free(aux_csv_line);
-       free(extremes_countries);
+
        fclose(csv_countries);
 }
 
-data_temp_t* CountriesCsvToStruct(char *_buffer, data_temp_t* _aux_csv_line){
-      char *aux=NULL;
+void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities){
+      int filetype=CITIES;
+      char buffer[BUFFER_SIZE]={0};
+      data_temp_t *aux = NULL;
+      data_temp_t *aux_csv_line=NULL;
 
-              aux = strtok(_buffer, ",");
+      FILE* csv_cities = fopen(file_cities, "r");
+
+      if (csv_cities==0){
+            fprintf(stderr, ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "OPENING CITIES FILE\n");
+            exit (0);
+      }
+
+      extremes_cities->head = NULL;
+      extremes_cities->tail = NULL;
+      extremes_cities->root = NULL;
+
+      aux_csv_line = (data_temp_t*)malloc(sizeof(data_temp_t));
+      if (aux_csv_line == NULL){
+            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation");
+            exit(EXIT_FAILURE);
+      }
+
+      while (NULL != fgets(buffer,BUFFER_SIZE,csv_cities)) {
+            aux = CsvToStruct(buffer, aux_csv_line, filetype);
+            if (aux->temperature==ERRORCODE) continue;
+            TreeLoader(*aux, extremes_cities);
+       }
+
+       TreetoList(extremes_cities->root, extremes_cities);
+
+       free(aux_csv_line);
+       fclose(csv_cities);
+}
+
+data_temp_t* CsvToStruct(char *_buffer, data_temp_t* _aux_csv_line, int _filetype){
+      char *aux=NULL;
+      int aux_01=0;
+            aux = strtok(_buffer, ",");
+
               if (atof(aux)==0){
                   _aux_csv_line->temperature = ERRORCODE;
                   return _aux_csv_line;
               }
+
               sscanf(aux, "%d-%d-%d", &_aux_csv_line->dt.year,&_aux_csv_line->dt.month,&_aux_csv_line->dt.day);
-              _aux_csv_line->concatenated_date=10000*_aux_csv_line->dt.year+100*_aux_csv_line->dt.month+_aux_csv_line->dt.day;
+              _aux_csv_line->ordering_identifier=10000*_aux_csv_line->dt.year+100*_aux_csv_line->dt.month+_aux_csv_line->dt.day;
+
               aux = strtok(NULL, ",");
               if (atof(aux)==0){
                   _aux_csv_line->temperature = ERRORCODE;
                   return _aux_csv_line;
               }
               _aux_csv_line->temperature = atof(aux);
+
               aux = strtok(NULL, ",");
               if (atof(aux)==0){
                   _aux_csv_line->temperature = ERRORCODE;
                   return _aux_csv_line;
               }
-	            _aux_csv_line->uncertainty = atof(aux);
-              aux = strtok(NULL, "\n");
-              strcpy(_aux_csv_line->country, aux);
+	        _aux_csv_line->uncertainty = atof(aux);
+
+              if(_filetype==COUNTRIES){
+                    aux = strtok(NULL, "\n");
+                    strcpy(_aux_csv_line->country, aux);
+                    return _aux_csv_line;
+              }
+              else{
+                    aux = strtok(NULL, ",");
+                    strcpy(_aux_csv_line->city, aux);
+
+                    aux = strtok(NULL, ",");
+                    strcpy(_aux_csv_line->country, aux);
+
+                    aux = strtok(NULL, ",");
+                    sscanf(aux,"%f%c", &_aux_csv_line->lat.angle,  &_aux_csv_line->lat.hemisphere);
+                    aux = strtok(NULL, "\n");
+
+                    aux_01=strlen(aux);
+                    switch (aux_01) {
+                          case 6:
+                              sscanf(aux,"%4f%c", &_aux_csv_line->longit.angle,  &_aux_csv_line->longit.hemisphere);
+                              break;
+                          case 7:
+                              sscanf(aux,"%5f%c",  &_aux_csv_line->longit.angle,  &_aux_csv_line->longit.hemisphere);
+                              break;
+                          case 8:
+                              sscanf(aux,"%6f%c", &_aux_csv_line->longit.angle,  &_aux_csv_line->longit.hemisphere);
+                              break;
+                          default:
+                                  break;
+                    }
+                    switch (_aux_csv_line->lat.hemisphere=='N') {
+                          case 1:
+                              switch (_aux_csv_line->longit.hemisphere=='W') {
+                                    case 1:
+                                          _aux_csv_line->ordering_identifier=(-_aux_csv_line->longit.angle+_aux_csv_line->lat.angle);
+                                          break;
+                                    case 0:
+                                          _aux_csv_line->ordering_identifier=(_aux_csv_line->longit.angle+_aux_csv_line->lat.angle);
+                                          break;
+                                    default:
+                                          break;
+                              }
+                              break;
+                          case 0:
+                              switch (_aux_csv_line->longit.hemisphere=='W') {
+                                    case 1:
+                                          _aux_csv_line->ordering_identifier=(-_aux_csv_line->longit.angle-_aux_csv_line->lat.angle);
+                                          break;
+                                    case 0:
+                                          _aux_csv_line->ordering_identifier=(_aux_csv_line->longit.angle-_aux_csv_line->lat.angle);
+                                          break;
+                                    default:
+                                          break;
+                              }
+                              break;
+                              default:
+                                    break;
+                    }
+
+              }
 
       return _aux_csv_line;
-
 }
 
 void PrintNode(data_temp_t aux){
@@ -75,11 +175,21 @@ void PrintNode(data_temp_t aux){
       printf("_____%s\n", aux.country);
 }
 
-void PrintCompleteNode(node_t aux){
-      printf("%d-%d-%d",aux.payload.dt.year, aux.payload.dt.month, aux.payload.dt.day );
-      printf("_______TEMP - %f", aux.payload.temperature );
-      printf("_______UNC - %f", aux.payload.uncertainty );
-      printf("_____%s\n", aux.payload.country);
+void PrintCompleteNode(node_t aux, int filetype){
+
+      printf("%d-%d-%d,",aux.payload.dt.year, aux.payload.dt.month, aux.payload.dt.day );
+      printf("%f,", aux.payload.temperature );
+      printf("%f,", aux.payload.uncertainty );
+      printf("%s", aux.payload.country);
+
+      if(filetype==CITIES){
+            printf(",%s,", aux.payload.city);
+            printf("%f,%c,", aux.payload.lat.angle,  aux.payload.lat.hemisphere);
+            printf("LONGIT,%f,%c", aux.payload.longit.angle,  aux.payload.longit.hemisphere);
+      }
+
+      printf("\n");
+
 }
 
 tree_node_t* NewTreeNode(data_temp_t _aux){
@@ -127,7 +237,7 @@ void TreeBuilder(list_t *extremes_countries, tree_node_t *_newNode){
       }
 
       while (curr != NULL){
-            if (_newNode->payload.concatenated_date < curr->payload.concatenated_date){
+            if (_newNode->payload.ordering_identifier < curr->payload.ordering_identifier){
                   if(curr->left==NULL){
                        curr->left= _newNode;
                        return;
@@ -176,14 +286,36 @@ void insertListTail_fromtree(tree_node_t* node_to_insert, list_t* _extremes_coun
       }
 }
 
-void PrintList(node_t *_head){
+void PrintList(node_t *extreme, int filetype){
+      node_t *aux = extreme;
+      int i=0;
+      //prev-tail-decreasing / next-head-increasing
+      while(aux->prev != NULL){
+            PrintCompleteNode(*aux, filetype);
+            aux=aux->prev;
+            i++;
+      }
+      printf("TOTAL_____%d\n", i );
+}
+
+int CountCities(node_t *_head){
+      node_t *aux = _head;
+      int i=0;
+      while(aux->prev != NULL){
+            if (strcmp(aux->payload.city, aux->prev->payload.city)){
+                  i++;
+            }
+            aux=aux->prev;
+      }
+      return i;
+}
+
+void freeList(node_t *_head){
       node_t *aux = _head;
 
       while(aux->next != NULL){
-            PrintCompleteNode(*aux);
             aux=aux->next;
             free(aux->prev);
       }
-
       free(aux);
 }
