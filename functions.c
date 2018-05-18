@@ -87,7 +87,6 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
       return _mode;
 }
 
-
 void MenuSurfer(int* T, int* ano, int* months){
 
       switch (MainMenu()) {
