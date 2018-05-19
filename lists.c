@@ -319,3 +319,68 @@ void freeList(node_t *_head){
       }
       free(aux);
 }
+
+
+void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2], int starting_yearmonth[2]  ){
+      node_t *aux=NULL;
+      int minimum_date = starting_yearmonth[0]*10000+starting_yearmonth[1]*100;
+      switch (filetype) {
+            case COUNTRIES:
+                  aux=extreme->head;
+                  while(aux->payload.ordering_identifier<minimum_date){
+                        aux=aux->next;
+                        extreme->head=aux;
+                        extreme->head->prev=NULL;
+
+                        free(aux->prev);
+                  }
+                  aux=extreme->head;
+            /*      do{
+                        if ( (starting_yearmonth[0]-aux->payload.dt.month)<=0 && (starting_yearmonth[1]-aux->payload.dt.month)>=0){
+                              aux=aux->next;
+                              printf("%s\n", "fien");
+                        }
+                        else{
+                              aux->prev->next=aux->next;
+                              aux->next->prev=aux->prev;
+                              if(aux==extreme->head) extreme->head=aux->next;
+                              aux=aux->next;
+                              aux->prev=NULL;
+                              free(aux->prev);
+                        }
+                  }while(aux!=extreme->tail->prev); */
+                  break;
+            case CITIES:
+            aux=extreme->head;
+            do{
+                        if (((aux->payload.dt.year*10000)+(aux->payload.dt.month*100)+(aux->payload.dt.day))>minimum_date){
+                              aux=aux->next;
+                              printf("%s\n", "fien");
+                        }
+                        else{
+                              aux->prev->next=aux->next;
+                              aux->next->prev=aux->prev;
+                              if(aux==extreme->head) extreme->head=aux->next;
+                              aux=aux->next;
+                              aux->prev=NULL;
+                              free(aux->prev);
+                        }
+                  }while(aux!=extreme->tail->prev);
+                  break;
+            default:
+                  break;
+      }
+
+}
+
+/*
+void removeHead(node_t **_head){
+      node_t *aux=NULL;
+
+      if (*_head==NULL) return;     //lista vazia:sair
+      aux= *_head;                  //ponteiro auxiliar igual a head antiga
+      *_head=(*_head)->next;        //avança a head para o próximo elemento
+      free(au *next;
+	struct node *prev;x);                    //liberta a memória da head antiga
+}
+*/

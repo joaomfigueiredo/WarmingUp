@@ -6,55 +6,55 @@
 #include "data_treatment.h"
 
 
-void TreatmentDataFilter(int* criteria, int* aux_df, int startingpoint[2], int monthspan[2]){ //função que trata a filtragem de dados
-
+void TreatmentDataFilter(int* aux_df, int starting_yearmonth[2], int monthspan[2]){ //função que trata a filtragem de dados
      int i = 0;
      char buffer[BUFFER_SIZE] = {0};
      char *request_df[2] = {"ano", "mês"};
 
-
      if (*aux_df == 1){
-
-          *criteria = 0;
-          printf("Os critérios foram limpos. ");
-
           for (i = 0; i < 2; i++){
-               startingpoint[i] = 0;
+               starting_yearmonth[i] = 0;
                monthspan[i] = 0;
           }
-
+           printf("Os critérios foram limpos.");
      }
 
      if (*aux_df == 2){
-
-          *criteria = 1;
           for (i = 0; i < 2; i++){
-               printf("Introduza a partir de que %s quer analisar os dados: ", request_df[i]);
+               printf("A partir de que %s quer analisar os dados: ", request_df[i]);
                while(1){
                      if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
 
-                     if((sscanf(buffer,"%d",&startingpoint[i])==1)&&(0<startingpoint[i]&&startingpoint[i]<3)) break;
-                     else (printf("Introduz um número entre <gama>! : "));
-                }
+                     if (i==0){
+                           if((sscanf(buffer,"%d",&starting_yearmonth[i])==1)&&(1600<starting_yearmonth[i]&&starting_yearmonth[i]<2014))
+                              break;
+                           else
+                              printf("Introduza um valor entre 1600 e 2014: ");
+                     }
+                     else if (i==1){
+                           if((sscanf(buffer,"%d",&starting_yearmonth[i])==1)&&(0<starting_yearmonth[i]&&starting_yearmonth[i]<13))
+                              break;
+                           else
+                              printf("Introduza um valor entre 1 e 12: ");
+                     }
+               }
           }
-
-          printf("Os critérios para esta opção foram alterados!\n");
+          printf("Os dados a analisar estão agora a ser reduzidos.\n");
      }
-
 
      if (*aux_df == 3){
 
-          *criteria = 1;
-          for (i = 0; i < 2; i++){
-               printf("Introduza de que mês a que mês é pretendido analisar. ");
-               while(1){
-                     if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
+               printf("Que intervalo de meses pertende analisar em cada ano( [mes1][espaço][mes2] ): ");
+               while (1) {
+                    if (fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
 
-                     if((sscanf(buffer,"%d",&monthspan[i])==1)&&(0<monthspan[i]&&monthspan[i]<3)) break;
-                     else (printf("Introduz um número entre <gama>! : "));
-                }
-          }
+                    if ((sscanf(buffer," %d %d",&monthspan[0], &monthspan[1])==2)&&(monthspan[0]<=monthspan[1]))
+                       break;
+                    else
+                       (printf("Verifique o formato dos dados introduzidos: "));
+               }
+      }
 
-          printf("Os critérios para esta opção foram alterados!\n");
-     }
+      *aux_df=0;
+
 }

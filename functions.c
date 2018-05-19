@@ -4,17 +4,6 @@
 #include "functions.h"
 #include "data.h"
 
-void myscanint ( int* _aux, int _min, int _max){
-
-     char buffer[BUFFER_SIZE] = {0};
-
-     while(1){
-           if(fgets(buffer, BUFFER_SIZE, stdin)==NULL) exit(-1);
-
-           if((sscanf(buffer,"%d",_aux)==1)&&((_min<*_aux)&&(*_aux<_max))) break;
-           else (printf("Introduz um número associado a uma opção! : "));
-     }
-}
 
 /*int myscannoerrorsforintvecs (int _vector[MAX_STR], int strsize, int _min, int _max ){
 
@@ -137,7 +126,6 @@ void MenuSurfer(int* T, int* ano, int* months, int* aux_df, int* aux_ms){
                             YearTempAnalise(ano);
                             break;
                         case 4:
-
                             *aux_ms = 1;
                             *aux_df = 0;
                             GlobalTempAnalise(months);
@@ -171,7 +159,7 @@ int MainMenu(){
 int DataFilter(){
 
      int _auxdf = 0;
-     printf(" auxdf %d", _auxdf);
+
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU FILTRAGEM DE DADOS: \n\n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_WHITE "1 - Limpar critérios atuais? \n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_BLUE "2 - Escolher intervalo de tempo para análise? \n" ANSI_COLOR_RESET);
@@ -180,7 +168,6 @@ int DataFilter(){
      printf("\n Escolha a opção: ");
      myscanint (&_auxdf, 0, 4);
 
-     printf(" auxdf %d", _auxdf);
      return _auxdf;
 
 }
@@ -228,4 +215,18 @@ int GlobalTempAnalise(int* months){
 
      return EXIT_SUCCESS;
 
+}
+
+void myscanint ( int* _aux, int _min, int _max){
+      char buffer[BUFFER_SIZE] = {0};
+
+      while(1){
+            if(fgets(buffer, BUFFER_SIZE, stdin)==NULL)
+                  exit(-1);
+
+            if((sscanf(buffer,"%d",_aux)==1)&&((_min<*_aux)&&(*_aux<_max)))
+                  break;
+            else
+                  (printf("Introduz um número associado a uma opção! : "));
+     }
 }

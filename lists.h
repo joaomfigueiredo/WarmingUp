@@ -18,6 +18,8 @@ void TreeLoader(data_temp_t , list_t *);
 void TreetoList(tree_node_t *, list_t *);
 void insertListTail_fromtree(tree_node_t*, list_t*);
 void PrintList(node_t*, int);
+void ConditionalNodeDeleter(list_t *, int, int[2], int [2]);
+
 
 int CountCities(node_t *);
 

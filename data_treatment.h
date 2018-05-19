@@ -3,7 +3,7 @@
 
 #include "data.h"
 
-void TreatmentDataFilter(int*, int*, int[], int[] );
+void TreatmentDataFilter(int*, int[], int[] );
 
 
 
