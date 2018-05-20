@@ -301,12 +301,13 @@ void PrintList(node_t *extreme, int filetype){
 int CountCities(node_t *_head){
       node_t *aux = _head;
       int i=0;
-      while(aux->prev != NULL){
-            if (strcmp(aux->payload.city, aux->prev->payload.city)){
+      while(aux->next != NULL){
+            if (strcmp(aux->payload.city, aux->next->payload.city)!=0){
                   i++;
             }
-            aux=aux->prev;
+            aux=aux->next;
       }
+      i++; // for the last one
       return i;
 }
 
@@ -319,7 +320,6 @@ void freeList(node_t *_head){
       }
       free(aux);
 }
-
 
 void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2], int starting_yearmonth[2]  ){
       node_t *aux=NULL;
@@ -339,7 +339,7 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                   aux=extreme->head;
                   if(months_interval[1]==0) break;
                   while(aux->next!=NULL){
-                        if ( (months_interval[0]-aux->payload.dt.month)<=0 && (months_interval[1]-aux->payload.dt.month)>=0){
+                        if ((months_interval[0]-aux->payload.dt.month)<=0 && (months_interval[1]-aux->payload.dt.month)>=0){
                               aux=aux->next;
                         }
                         else{
@@ -358,42 +358,62 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                               }
 
                               free(aux);
-
                               aux=aux->next;
-
                         }
                   }
                   break;
             case CITIES:
-            aux=extreme->head;
-            do{
-                        if (((aux->payload.dt.year*10000)+(aux->payload.dt.month*100)+(aux->payload.dt.day))>minimum_date){
-                              aux=aux->next;
-                        }
-                        else{
-                              aux->prev->next=aux->next;
-                              aux->next->prev=aux->prev;
-                              if(aux==extreme->head) extreme->head=aux->next;
-                              aux=aux->next;
-                              aux->prev=NULL;
-                              free(aux->prev);
-                        }
-                  }while(aux!=extreme->tail->prev);
+                  aux=extreme->head;
+                  while(aux->next!=NULL){
+                              if (((aux->payload.dt.year*10000)+(aux->payload.dt.month*100)+(aux->payload.dt.day))>minimum_date){
+                                    aux=aux->next;
+                              }
+                              else{
+                                    if(aux==extreme->head){
+                                          aux->next->prev=NULL;
+                                          extreme->head=aux->next;
+                                          extreme->head->prev=NULL;
+                                    }
+                                    else if(aux==extreme->tail){
+                                          aux->prev->next=NULL;
+                                          extreme->tail=aux->prev;
+                                    }
+                                    else{
+                                          aux->prev->next=aux->next;
+                                          aux->next->prev=aux->prev;
+                                    }
+
+                                    free(aux);
+                                    aux=aux->next;
+                              }
+                  }
+                  aux=extreme->head;
+                  while(aux->next!=NULL){
+                              if (((aux->payload.dt.year*10000)+(aux->payload.dt.month*100)+(aux->payload.dt.day))>=minimum_date){
+                                    aux=aux->next;
+                              }
+                              else{
+                                    if(aux==extreme->head){
+                                          aux->next->prev=NULL;
+                                          extreme->head=aux->next;
+                                          extreme->head->prev=NULL;
+                                    }
+                                    else if(aux==extreme->tail){
+                                          aux->prev->next=NULL;
+                                          extreme->tail=aux->prev;
+                                    }
+                                    else{
+                                          aux->prev->next=aux->next;
+                                          aux->next->prev=aux->prev;
+                                    }
+
+                                    free(aux);
+                                    aux=aux->next;
+                              }
+                  }
                   break;
             default:
                   break;
       }
 
 }
-
-/*
-void removeHead(node_t **_head){
-      node_t *aux=NULL;
-
-      if (*_head==NULL) return;     //lista vazia:sair
-      aux= *_head;                  //ponteiro auxiliar igual a head antiga
-      *_head=(*_head)->next;        //avança a head para o próximo elemento
-      free(au *next;
-	struct node *prev;x);                    //liberta a memória da head antiga
-}
-*/

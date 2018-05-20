@@ -7,6 +7,19 @@
 #define FILENAME_SIZE 50
 #define ERRORCODE 20180502
 
+#define TABLE_SIZE 600     // main game space size
+#define LEFT_BAR_SIZE 200    // left white bar size
+#define WINDOW_POSX 20      // initial position of the window: x
+#define WINDOW_POSY 10       // initial position of the window: y
+#define SQUARE_SEPARATOR 8    // square separator in px
+#define BOARD_SIZE_PER 0.7f   // board size in % wrt to table size
+#define MARGIN 1
+#define MAX(a,b) (((a)>(b))?(a):(b))
+#define MAX_BOARD_POS 15
+#define M_PI 3.14159
+#define STRING_SIZE 100       // max size for some strings
+#define MAX_COLORS 5
+
 
 #define COUNTRIES 0
 #define CITIES 1
