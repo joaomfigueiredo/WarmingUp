@@ -29,20 +29,20 @@ int main(int argc, char *argv[]){
                   exit(EXIT_FAILURE);
             }
 
-      extremes_cities = (list_t*)malloc(sizeof(list_t));
+/*      extremes_cities = (list_t*)malloc(sizeof(list_t));
             if (extremes_cities == NULL){
                   printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation");
                   exit(EXIT_FAILURE);
             }
-
+*/
       fprintf(stderr,ANSI_COLOR_WARNINGS "LOADING AND SORTING COUNTRIES" ANSI_COLOR_RESET);
      	LoadTempCountries(files[0], extremes_countries);
       fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCOUNTRIES ARE NOW LOADED AND SORTED\n" ANSI_COLOR_RESET);
-
+/*
       fprintf(stderr,"LOADING AND SORTING CITIES");
       LoadTempCities(files[1], extremes_cities);
       fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCITIES ARE NOW LOADED AND SORTED" ANSI_COLOR_RESET);
-
+*/
 
       if (mode==TEXTUAL){
 	   while(1){
@@ -64,16 +64,18 @@ int main(int argc, char *argv[]){
       printf("ano %d\n\n", ano);
       printf("meses %d\n\n", months);
 	printf("AGORA%d\n",extremes_countries->head->payload.ordering_identifier);
+
+
 	PrintList(extremes_countries->tail, COUNTRIES);
 
 
-      //PrintList(extremes_cities->tail, CITIES);
-      CountCities(extremes_cities->tail);
+//      PrintList(extremes_cities->tail, CITIES);
+//      CountCities(extremes_cities->tail);
 
-      freeList(extremes_cities->head);
+//      freeList(extremes_cities->head);
       freeList(extremes_countries->head);
 
-      free(extremes_cities);
+//      free(extremes_cities);
       free(extremes_countries);
       return EXIT_SUCCESS;
 }

@@ -323,39 +323,52 @@ void freeList(node_t *_head){
 
 void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2], int starting_yearmonth[2]  ){
       node_t *aux=NULL;
-      int minimum_date = starting_yearmonth[0]*10000+starting_yearmonth[1]*100;
+      int minimum_date = starting_yearmonth[0]*10000+starting_yearmonth[1]*100, a=0;
+
       switch (filetype) {
             case COUNTRIES:
+                  //to limit lowest date
                   aux=extreme->head;
                   while(aux->payload.ordering_identifier<minimum_date){
                         aux=aux->next;
                         extreme->head=aux;
-                        extreme->head->prev=NULL;
-
                         free(aux->prev);
+                        extreme->head->prev=NULL;
                   }
+                  //date interval
                   aux=extreme->head;
-            /*      do{
-                        if ( (starting_yearmonth[0]-aux->payload.dt.month)<=0 && (starting_yearmonth[1]-aux->payload.dt.month)>=0){
+                  if(months_interval[1]==0) break;
+                  while(aux->next!=NULL){
+                        if ( (months_interval[0]-aux->payload.dt.month)<=0 && (months_interval[1]-aux->payload.dt.month)>=0){
                               aux=aux->next;
-                              printf("%s\n", "fien");
                         }
                         else{
-                              aux->prev->next=aux->next;
-                              aux->next->prev=aux->prev;
-                              if(aux==extreme->head) extreme->head=aux->next;
+                              if(aux==extreme->head){
+                                    aux->next->prev=NULL;
+                                    extreme->head=aux->next;
+                                    extreme->head->prev=NULL;
+                              }
+                              else if(aux==extreme->tail){
+                                    aux->prev->next=NULL;
+                                    extreme->tail=aux->prev;
+                              }
+                              else{
+                                    aux->prev->next=aux->next;
+                                    aux->next->prev=aux->prev;
+                              }
+
+                              free(aux);
+
                               aux=aux->next;
-                              aux->prev=NULL;
-                              free(aux->prev);
+
                         }
-                  }while(aux!=extreme->tail->prev); */
+                  }
                   break;
             case CITIES:
             aux=extreme->head;
             do{
                         if (((aux->payload.dt.year*10000)+(aux->payload.dt.month*100)+(aux->payload.dt.day))>minimum_date){
                               aux=aux->next;
-                              printf("%s\n", "fien");
                         }
                         else{
                               aux->prev->next=aux->next;
