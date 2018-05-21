@@ -6,6 +6,7 @@
 #include <string.h>
 #include "functions.h"
 #include "data.h"
+#include "math.h"
 #include "graphics.h"
 
 extern const char myName[];
@@ -152,7 +153,7 @@ int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer){
     SDL_Rect boardPos;
 
     // space occupied by the logo
-    boardPos.x = x+750;
+    boardPos.x = x+650;
     boardPos.y = y;
     boardPos.w = _logoIST->w;
     boardPos.h = _logoIST->h;
@@ -169,12 +170,10 @@ int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer){
 
 int RenderTable( int _board_pos_x, int _board_pos_y, int _board_size_px[],
         TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, int _board[][MAX_BOARD_POS], int moves[][MAX_BOARD_POS]){
-    SDL_Color black = { 0, 0, 0 }; // black
-    SDL_Color light = { 255, 255, 255 };
     SDL_Color dark = { 255, 255, 255 };
     SDL_Texture *table_texture;
     SDL_Rect tableSrc, tableDest, board, board_square;
-    int height, board_size, square_size_px, max_pos /*,clr=0*/;
+    int height, square_size_px;
 
     // set color of renderer to some color
     SDL_SetRenderDrawColor( _renderer, 255, 255, 255, 255 );
@@ -275,30 +274,35 @@ void CalculatePos (node_t* _aux ,int* pt_x, int* pt_y  ){
 
      aux = QuadrantDefiner(_aux);
 
-     *pt_x = (int)((_aux->payload.longit.angle) * (5.0/3));
-     *pt_y = (int)((_aux->payload.lat.angle) * (5.0/3));
+     *pt_x = (int)((_aux->payload.longit.angle) * (10.0/3));
+     *pt_y = (int)((_aux->payload.lat.angle) * (10.0/3));
 
+     if ( aux == 1){
+          *pt_x = *pt_x;
+          *pt_y = -*pt_y;
+     }
 
-     if (aux == 2){
-       *pt_x =  *pt_x;
+     else if (aux == 2){
+          *pt_x =  -*pt_x;
+          *pt_y = -*pt_y;
      }
      else if (aux == 3){
           *pt_x = -*pt_x;
-          *pt_y = -*pt_y;
+          *pt_y = *pt_y;
      }
-     else {
-       *pt_y = -*pt_y;
+     else if (aux == 4) {
+          *pt_x = *pt_x;
+          *pt_y = *pt_y;
      }
     /*else {
            printf(ANSI_COLOR_WARNINGS "WARNING:" ANSI_COLOR_RESET "interpreting hemisphere failed(2_[%d]).\n", aux);
            exit(EXIT_FAILURE);
      }*/
 
-
 }
 
 
-void CityCoordinateCalculator(node_t *_head, int *pt_x, int *pt_y,int  *pixel_coord_cities[2], int number_of_cities){
+void CityCoordinateCalculator(node_t *_head, int *pt_x, int *pt_y,int *pixel_coord_cities[2], int number_of_cities,float *temp_cities[1], char *cities_names[BUFFER_SIZE]){
       node_t *aux = _head;
       int i=0;
 
@@ -308,6 +312,7 @@ void CityCoordinateCalculator(node_t *_head, int *pt_x, int *pt_y,int  *pixel_co
                   if ((*pt_x==0)&&(*pt_y==0)) printf(ANSI_COLOR_WARNINGS "WARNING:" ANSI_COLOR_RESET "CalculatePos returning zeros.");
                   pixel_coord_cities[0][i]=*pt_x;
                   pixel_coord_cities[1][i]=*pt_y;
+                  temp_cities[0][i] = aux->payload.temperature;
                   //printf("%d  %d\n", pixel_coord_cities[0][i], pixel_coord_cities[1][i]  );
                   //printf("%s\n", aux->payload.city);
                   i++;
@@ -327,4 +332,128 @@ void CityCoordinateCalculator(node_t *_head, int *pt_x, int *pt_y,int  *pixel_co
       if ((*pt_x==0)&&(*pt_y==0)) printf(ANSI_COLOR_WARNINGS "WARNING:" ANSI_COLOR_RESET "CalculatePos returning zeros.");
       pixel_coord_cities[0][i]=*pt_x;
       pixel_coord_cities[1][i]=*pt_y;
+      temp_cities[0][i] = aux->payload.temperature;
+
 }
+
+void RenderPoints( int _board[][MAX_BOARD_POS], int *pixel_coord_cities[2],float *temp_cities[1], int _board_size_px[], int _square_size_px, SDL_Renderer *_renderer, int number_of_cities ){
+
+     int circleX = 0;
+     int circleY = 0;
+     int circleR = 0;
+     int blue = 0;
+     int red = 0;
+     int green = 0;
+     float temp = 0;
+     temp = 0;
+
+     // define the size and copy the image to display
+
+     for ( int i = 0; i < number_of_cities; i++){
+
+          circleX = pixel_coord_cities[0][i]+600;
+          circleY = pixel_coord_cities[1][i]+300;
+          circleR = 5;
+          temp = temp_cities[0][i];
+
+          // draw a circle
+          //clr = _board[i][j];
+          colorTemperatureToRGB (temp, &red, &green, &blue );
+          filledCircleRGBA(_renderer, circleX, circleY, circleR, red, green, blue);
+     }
+}
+
+/**
+ * filledCircleRGBA: renders a filled circle
+ * \param _circleX x pos
+ * \param _circleY y pos
+ * \param _circleR radius
+ * \param _r red
+ * \param _g gree
+ * \param _b blue
+ */
+
+void filledCircleRGBA(SDL_Renderer * _renderer, int _circleX, int _circleY, int _circleR, int _r, int _g, int _b){
+    int off_x = 0;
+    int off_y = 0;
+    float degree = 0.0;
+    float step = M_PI / (_circleR*8);
+
+    SDL_SetRenderDrawColor(_renderer, _r, _g, _b, 255);
+
+    while (_circleR > 0)
+    {
+        for (degree = 0.0; degree < M_PI/2; degree+=step)
+        {
+            off_x = (int)(_circleR * cos(degree));
+            off_y = (int)(_circleR * sin(degree));
+            SDL_RenderDrawPoint(_renderer, _circleX+off_x, _circleY+off_y);
+            SDL_RenderDrawPoint(_renderer, _circleX-off_y, _circleY+off_x);
+            SDL_RenderDrawPoint(_renderer, _circleX-off_x, _circleY-off_y);
+            SDL_RenderDrawPoint(_renderer, _circleX+off_y, _circleY-off_x);
+        }
+        _circleR--;
+    }
+}
+
+
+
+void colorTemperatureToRGB (float _temp ,int* red, int* green, int* blue){
+
+     //NAO ESQUECER DE POR A 0 NO FINAL AS VARIAVEIS!
+
+     if( _temp < 41 && _temp >= 23 ){
+
+        *red = 255;
+        *blue = 0;
+        *green = (566 - (14.15*_temp));
+     }
+
+     if( _temp < 23 && _temp >= 18 ){
+
+        *red = ((17*_temp) - 136);
+        *blue = 0;
+        *green = 255;
+     }
+
+     if( _temp < 18 && _temp >= 17 ){
+
+        *red = ((170*_temp) - 2890);
+        *blue = 0;
+        *green = 255;
+     }
+
+     if( _temp < 17 && _temp >= 16 ){
+
+        *red = 0;
+        *blue = 255;
+        *green = (2720 - (170*_temp));
+     }
+
+     if( _temp < 16 && _temp >= 10 ){
+
+        *red = 0;
+        *blue = 255;
+        *green = (396.5 - (14.15*_temp));
+     }
+
+     if( _temp < 10 && _temp > -15 ){
+
+        *red = 0;
+        *blue = 10.2*_temp + 153;
+        *green = 255;
+     }
+}
+
+
+
+
+/*function clamp( x, min, max ) {
+
+    if(x<min){ return min; }
+    if(x>max){ return max; }
+
+    return x;
+
+}
+*/

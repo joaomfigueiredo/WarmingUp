@@ -4,8 +4,8 @@
 #include "data.h"
 
 
-void LoadTempCountries(char [50], list_t*);
-void LoadTempCities(char [50],list_t*);
+void LoadTempCountries(char [50], list_t*, int[4]);
+void LoadTempCities(char [50],list_t*, int[4]);
 
 data_temp_t* CsvToStruct(char *, data_temp_t *, int);
 tree_node_t* NewTreeNode(data_temp_t);
@@ -18,7 +18,7 @@ void TreeLoader(data_temp_t , list_t *);
 void TreetoList(tree_node_t *, list_t *);
 void insertListTail_fromtree(tree_node_t*, list_t*);
 void PrintList(node_t*, int);
-void ConditionalNodeDeleter(list_t *, int, int[2], int [2]);
+void ConditionalNodeDeleter(list_t *, int, int[2], int [2], int [4]);
 
 
 int CountCities(node_t *);

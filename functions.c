@@ -106,7 +106,7 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
       return _mode;
 }
 
-void MenuSurfer(int* T, int* ano, int* months, int* aux_df, int* aux_ms){
+void MenuSurfer(int* T, int* ano, int* months, int* aux_df, int* aux_ms, int* _auxth, char place_in_analysis[BUFFER_SIZE]){
 
       switch (MainMenu()) {
                         case 0:
@@ -117,17 +117,14 @@ void MenuSurfer(int* T, int* ano, int* months, int* aux_df, int* aux_ms){
                             break;
                         case 2:
                             *aux_ms = 1;
-                            *aux_df = 0;
-                            TemperatureHistory(T);
+                            TemperatureHistory(T,_auxth, place_in_analysis);
                             break;
                         case 3:
                             *aux_ms = 1;
-                            *aux_df = 0;
                             YearTempAnalise(ano);
                             break;
                         case 4:
                             *aux_ms = 1;
-                            *aux_df = 0;
                             GlobalTempAnalise(months);
                             break;
                         default:
@@ -172,11 +169,11 @@ int DataFilter(){
 
 }
 
-int TemperatureHistory(int* T){
-     int _auxth=0;
+void TemperatureHistory(int* T, int* _auxth, char place_in_analysis[BUFFER_SIZE]){
 
-     printf("Qual o valor de tempo (em anos) relativo ao período de amostragem que quer analisar? ");
-     myscanint ( T, 0, 500);
+
+     printf("Qual é o período, em anos, que quer definir para cada análise:  ");
+     myscanint (T, 0, 500);
 
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU HISTÓRICO DE TEMPERATURAS: \n\n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_WHITE "1 - Análise global?\n" ANSI_COLOR_RESET);
@@ -184,9 +181,24 @@ int TemperatureHistory(int* T){
      printf(ANSI_COLOR_BOLD_CYAN "3 - Análise por cidade? \n" ANSI_COLOR_RESET);
 
      printf("\n Escolha a opção: ");
-     myscanint ( &_auxth, 0, 4);
+     myscanint (_auxth, 0, 4);
 
-     return _auxth;
+     switch (*_auxth) {
+           case 1:
+            break;
+           case 2:
+            printf("Introduza o nome do país a analisar: ");
+            myscanstring(place_in_analysis);
+            break;
+           case 3:
+            printf("Introduza a cidade a analisar: " );
+            myscanstring(place_in_analysis);
+            break;
+           default:
+            break;
+     }
+
+
 }
 
 int YearTempAnalise(int* ano){
@@ -227,6 +239,21 @@ void myscanint ( int* _aux, int _min, int _max){
             if((sscanf(buffer,"%d",_aux)==1)&&((_min<*_aux)&&(*_aux<_max)))
                   break;
             else
-                  (printf("Introduz um número associado a uma opção! : "));
+                  (printf("Introduz um número entre %d e %d! : ", _min,_max));
      }
+}
+
+void myscanstring(char place_in_analysis[BUFFER_SIZE]){
+      char buffer[BUFFER_SIZE] = {0};
+
+      while(1){
+            if(fgets(place_in_analysis, BUFFER_SIZE, stdin)==NULL)
+                  exit(-1);
+            else break;
+
+      //      if((strcpy(place_in_analysis, buffer)!=NULL))
+      //            break;
+      //                  (printf("Introduz um número associado a uma opção! : "));
+     }
+
 }

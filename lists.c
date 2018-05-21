@@ -6,7 +6,7 @@
 #include "lists.h"
 
 
-void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_countries ){
+void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_countries, int extremes_dates[4] ){
       int filetype=COUNTRIES;
       char buffer[BUFFER_SIZE]={0};
       data_temp_t *aux = NULL;
@@ -37,12 +37,15 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_count
 
        TreetoList(extremes_countries->root, extremes_countries);
 
+       extremes_dates[0]=extremes_countries->head->payload.ordering_identifier;
+       extremes_dates[1]=extremes_countries->tail->payload.ordering_identifier;
+
        free(aux_csv_line);
 
        fclose(csv_countries);
 }
 
-void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities){
+void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities, int extremes_dates[4]){
       int filetype=CITIES;
       char buffer[BUFFER_SIZE]={0};
       data_temp_t *aux = NULL;
@@ -69,7 +72,11 @@ void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities){
             aux = CsvToStruct(buffer, aux_csv_line, filetype);
             if (aux->temperature==ERRORCODE) continue;
             TreeLoader(*aux, extremes_cities);
-       }
+            if ( ((aux->dt.year*10000)+(aux->dt.month*100)+(aux->dt.day)) > extremes_dates[3] )
+                  extremes_dates[3]=((aux->dt.year*10000)+(aux->dt.month*100)+(aux->dt.day));
+            if (( ((aux->dt.year*10000)+(aux->dt.month*100)+(aux->dt.day)) < extremes_dates[2] ) || extremes_dates[2]==0)
+                  extremes_dates[2]=((aux->dt.year*10000)+(aux->dt.month*100)+(aux->dt.day));
+      }
 
        TreetoList(extremes_cities->root, extremes_cities);
 
@@ -321,9 +328,9 @@ void freeList(node_t *_head){
       free(aux);
 }
 
-void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2], int starting_yearmonth[2]  ){
+void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2], int starting_yearmonth[2] , int extremes_dates[4]){
       node_t *aux=NULL;
-      int minimum_date = starting_yearmonth[0]*10000+starting_yearmonth[1]*100, a=0;
+      int minimum_date = starting_yearmonth[0]*10000+starting_yearmonth[1]*100;
 
       switch (filetype) {
             case COUNTRIES:
@@ -361,6 +368,8 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                               aux=aux->next;
                         }
                   }
+                  extremes_dates[0]=extreme->head->payload.ordering_identifier;
+                  extremes_dates[1]=extreme->tail->payload.ordering_identifier;
                   break;
             case CITIES:
                   aux=extreme->head;
@@ -387,6 +396,7 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                                     aux=aux->next;
                               }
                   }
+                  extremes_dates[2]=minimum_date;
                   aux=extreme->head;
                   while(aux->next!=NULL){
                               if (((aux->payload.dt.year*10000)+(aux->payload.dt.month*100)+(aux->payload.dt.day))>=minimum_date){
