@@ -110,10 +110,13 @@ int main(int argc, char *argv[]){
                         TreatmentDataFilter(&aux_df, starting_yearmonth, months_interval);
                         ConditionalNodeDeleter(extremes_countries, COUNTRIES,months_interval,starting_yearmonth, extremes_dates);
                         ConditionalNodeDeleter(extremes_cities, CITIES,months_interval,starting_yearmonth, extremes_dates);
+                        printf("%s\n", "DELETEEEEED");
+                        PrintCompleteNode(*extremes_countries->head, COUNTRIES);
+                        aux_df=0;
                   }
                   while (auxth!=0){
 
-                        TreatmentTemperatureHistory(extremes_cities, T, auxth, place_in_analysis, extremes_dates);
+                        TreatmentTemperatureHistory(extremes_countries, T, auxth, place_in_analysis, extremes_dates);
                         auxth=0;
                         printf("SAIUUUU\n" );
                   }
@@ -167,7 +170,7 @@ int main(int argc, char *argv[]){
 	printf("AGORA%d\n",extremes_countries->head->payload.ordering_identifier);
       printf("%d\n", extremes_dates[0] );
 
-	PrintList(extremes_countries->tail, COUNTRIES);
+	//PrintList(extremes_countries->tail, COUNTRIES);
       //PrintList(extremes_cities->tail, CITIES);
       CountCities(extremes_cities->tail);
 

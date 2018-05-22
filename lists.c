@@ -169,7 +169,7 @@ void PrintNode(data_temp_t aux){
 }
 
 void PrintCompleteNode(node_t aux, int filetype){
-
+      printf("OI %d,", aux.payload.ordering_identifier);
       printf("%d-%d-%d,",aux.payload.dt.year, aux.payload.dt.month, aux.payload.dt.day );
       printf("%f,", aux.payload.temperature );
       printf("%f,", aux.payload.uncertainty );
