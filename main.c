@@ -15,7 +15,7 @@ const char myNumber[] = "Golo";
 const int colors[3][MAX_COLORS] = {{246, 52, 255, 186, 124},{255, 211, 0, 0, 39},{37, 21, 0, 93, 137}};
 
 int main(int argc, char *argv[]){
-      int i=0;
+      int i=0, j=0;
 
       int aux_ms = 0; // 0- parametrizar as funçoes||||| 1-executando e voltando
       int mode = 0;
@@ -45,7 +45,7 @@ int main(int argc, char *argv[]){
       char *cities_names[BUFFER_SIZE];
       int extremes_dates[4]={0};//stores in 0 and 1 coutires minimum_date and maximum date and in 2 and 3 about CITIES
       float *temp_cities[1];
-      char place_in_analysis[BUFFER_SIZE];
+      char place_in_analysis[BUFFER_SIZE]={0};
       //Declarações para os graphics// initialize graphics
      int quit = 0;
      int width = (TABLE_SIZE + LEFT_BAR_SIZE);
@@ -74,11 +74,11 @@ int main(int argc, char *argv[]){
             }
 
       fprintf(stderr,ANSI_COLOR_WARNINGS "LOADING AND SORTING COUNTRIES" ANSI_COLOR_RESET);
-     	LoadTempCountries(files[0], extremes_countries, extremes_dates);
+     	LoadTempCountries(files[0], extremes_countries, extremes_dates, mode);
       fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCOUNTRIES ARE NOW LOADED AND SORTED\n" ANSI_COLOR_RESET);
 
       fprintf(stderr,"LOADING AND SORTING CITIES");
-      LoadTempCities(files[1], extremes_cities, extremes_dates);
+      LoadTempCities(files[1], extremes_cities, extremes_dates, mode);
       fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCITIES ARE NOW LOADED AND SORTED\n" ANSI_COLOR_RESET);
 
       number_of_cities=CountCities(extremes_cities->head);
@@ -100,24 +100,26 @@ int main(int argc, char *argv[]){
       printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
 
       if (mode==TEXTUAL){
-	   while(1){
-                if ( (aux_ms == 1)) break;
+	      while(1){
+                  if ( (aux_ms == 1)) break;
 
-                MenuSurfer(&T, &ano, &months, &aux_df, &aux_ms, &auxth, place_in_analysis);
-                printf("T___%d__auxth____%d____%s__\n",T, auxth, place_in_analysis );
-                while (aux_df != 0){
-                     TreatmentDataFilter(&aux_df, starting_yearmonth, months_interval);
-			   printf("sp[1]-%d__sp[0]-%d___ms[1]-%d___ms[0]-%d", starting_yearmonth[1], starting_yearmonth[0], months_interval[1], months_interval[0]);
-                     printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
+                  MenuSurfer(&T, &ano, &months, &aux_df, &aux_ms, &auxth, place_in_analysis);
+                  printf("T___%d__auxth____%d____%s__\n",T, auxth, place_in_analysis );
 
-                }
-                while (auxth!=0){
-                      //TreatmentTemperatureHistory{}
-                }
-          }
-	  }
+                  while (aux_df != 0){
+                        TreatmentDataFilter(&aux_df, starting_yearmonth, months_interval);
+                        ConditionalNodeDeleter(extremes_countries, COUNTRIES,months_interval,starting_yearmonth, extremes_dates);
+                        ConditionalNodeDeleter(extremes_cities, CITIES,months_interval,starting_yearmonth, extremes_dates);
+                  }
+                  while (auxth!=0){
 
-       else if (mode == GRAPHICAL){
+                        TreatmentTemperatureHistory(extremes_cities, T, auxth, place_in_analysis, extremes_dates);
+                        auxth=0;
+                        printf("SAIUUUU\n" );
+                  }
+	      }
+      }
+      else if (mode == GRAPHICAL){
             //initialize graphics
             InitEverything(width, height, &serif, &sans, imgs, &window, &renderer);
 
@@ -149,36 +151,39 @@ int main(int argc, char *argv[]){
            RenderPoints(board, pixel_coord_cities, temp_cities, board_size_px, square_size_px, renderer, number_of_cities);
            //render in the screen all changes above
            SDL_RenderPresent(renderer);
+
            // add a delay
            SDL_Delay( delay );
            }
       }
-
       else{
             printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Even after input check, fell in a undefined mode.");
+            exit(EXIT_FAILURE);
       }
-
-
-	ConditionalNodeDeleter(extremes_countries, COUNTRIES,months_interval,starting_yearmonth, extremes_dates);
-      ConditionalNodeDeleter(extremes_cities, CITIES,months_interval,starting_yearmonth, extremes_dates);
 
       printf("Temp %d\n\n", T);
       printf("ano %d\n\n", ano);
       printf("meses %d\n\n", months);
 	printf("AGORA%d\n",extremes_countries->head->payload.ordering_identifier);
+      printf("%d\n", extremes_dates[0] );
 
-
-	//PrintList(extremes_countries->tail, COUNTRIES);
-
-
+	PrintList(extremes_countries->tail, COUNTRIES);
       //PrintList(extremes_cities->tail, CITIES);
       CountCities(extremes_cities->tail);
 
+
       freeList(extremes_cities->head);
+      printf("%s\n","cidades freed" );
       freeList(extremes_countries->head);
-      for (i=0; i<number_of_cities; i++){
-            free(cities_names[i]);}
-      free(cities_names[i]);
+      printf("%s\n","paises freed" );
+
+      //free(cities_names);
+      // for (i=0; i<number_of_cities; i++){
+            // free(++cities_names[i]);
+      // }
+
+
+      printf("%s\n", "nomes das cidades freed" );
       free(pixel_coord_cities[0]);
       free(pixel_coord_cities[1]);
       free(temp_cities[0]);

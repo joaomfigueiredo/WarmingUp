@@ -20,6 +20,9 @@
 #define STRING_SIZE 100       // max size for some strings
 #define MAX_COLORS 5
 
+#define GLOBAL 1
+#define PER_COUNTRY 2
+#define PER_CITY 2
 
 #define COUNTRIES 0
 #define CITIES 1
@@ -61,6 +64,15 @@ typedef struct data_temp{
 	geo_coord_t longit;
 } data_temp_t;
 
+typedef struct temp_hist{
+	int begin_period;
+	int end_period;
+	int average;
+	int num_of_val;
+	float maximum_temp;
+	float minimum_temp;
+} temp_hist_t;
+
 typedef struct node{
 	data_temp_t payload;
 	struct node *next;
@@ -73,10 +85,21 @@ typedef struct tree_node{
 	struct tree_node *left;
 }tree_node_t;
 
+typedef struct node_th{
+	temp_hist_t payload;
+	struct node_th *next;
+	struct node_th *prev;
+}node_th_t;
+
 typedef struct list{
 	node_t* head;
 	node_t* tail;
 	tree_node_t* root;
 }list_t;
+
+typedef struct list_th{
+	node_th_t* head;
+	node_th_t* tail;
+}list_th_t;
 
 #endif

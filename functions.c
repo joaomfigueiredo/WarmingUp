@@ -244,16 +244,13 @@ void myscanint ( int* _aux, int _min, int _max){
 }
 
 void myscanstring(char place_in_analysis[BUFFER_SIZE]){
-      char buffer[BUFFER_SIZE] = {0};
 
       while(1){
             if(fgets(place_in_analysis, BUFFER_SIZE, stdin)==NULL)
                   exit(-1);
-            else break;
-
-      //      if((strcpy(place_in_analysis, buffer)!=NULL))
-      //            break;
-      //                  (printf("Introduz um número associado a uma opção! : "));
+            else{
+                  place_in_analysis[strlen(place_in_analysis)-1]=0;
+                  break;
+            }
      }
-
 }

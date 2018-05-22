@@ -6,7 +6,7 @@
 #include "lists.h"
 
 
-void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_countries, int extremes_dates[4] ){
+void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_countries, int extremes_dates[4], int mode ){
       int filetype=COUNTRIES;
       char buffer[BUFFER_SIZE]={0};
       data_temp_t *aux = NULL;
@@ -30,7 +30,7 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_count
       }
 
       while (NULL != fgets(buffer,BUFFER_SIZE,csv_countries)) {
-            aux = CsvToStruct(buffer, aux_csv_line, filetype);
+            aux = CsvToStruct(buffer, aux_csv_line, filetype, mode);
             if (aux->temperature==ERRORCODE) continue;
             TreeLoader(*aux, extremes_countries);
        }
@@ -45,7 +45,7 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_count
        fclose(csv_countries);
 }
 
-void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities, int extremes_dates[4]){
+void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities, int extremes_dates[4],int mode){
       int filetype=CITIES;
       char buffer[BUFFER_SIZE]={0};
       data_temp_t *aux = NULL;
@@ -69,7 +69,7 @@ void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities, int
       }
 
       while (NULL != fgets(buffer,BUFFER_SIZE,csv_cities)) {
-            aux = CsvToStruct(buffer, aux_csv_line, filetype);
+            aux = CsvToStruct(buffer, aux_csv_line, filetype, mode);
             if (aux->temperature==ERRORCODE) continue;
             TreeLoader(*aux, extremes_cities);
             if ( ((aux->dt.year*10000)+(aux->dt.month*100)+(aux->dt.day)) > extremes_dates[3] )
@@ -84,7 +84,7 @@ void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities, int
        fclose(csv_cities);
 }
 
-data_temp_t* CsvToStruct(char *_buffer, data_temp_t* _aux_csv_line, int _filetype){
+data_temp_t* CsvToStruct(char *_buffer, data_temp_t* _aux_csv_line, int _filetype, int mode){
       char *aux=NULL;
       int aux_01=0;
             aux = strtok(_buffer, ",");
@@ -141,36 +141,22 @@ data_temp_t* CsvToStruct(char *_buffer, data_temp_t* _aux_csv_line, int _filetyp
                           default:
                                   break;
                     }
-                    switch (_aux_csv_line->lat.hemisphere=='N') {
-                          case 1:
-                              switch (_aux_csv_line->longit.hemisphere=='W') {
-                                    case 1:
-                                          _aux_csv_line->ordering_identifier=(-_aux_csv_line->longit.angle+_aux_csv_line->lat.angle);
-                                          break;
-                                    case 0:
-                                          _aux_csv_line->ordering_identifier=(_aux_csv_line->longit.angle+_aux_csv_line->lat.angle);
-                                          break;
-                                    default:
-                                          break;
-                              }
-                              break;
-                          case 0:
-                              switch (_aux_csv_line->longit.hemisphere=='W') {
-                                    case 1:
-                                          _aux_csv_line->ordering_identifier=(-_aux_csv_line->longit.angle-_aux_csv_line->lat.angle);
-                                          break;
-                                    case 0:
-                                          _aux_csv_line->ordering_identifier=(_aux_csv_line->longit.angle-_aux_csv_line->lat.angle);
-                                          break;
-                                    default:
-                                          break;
-                              }
-                              break;
-                              default:
-                                    break;
-                    }
 
-              }
+                   if (_aux_csv_line->lat.hemisphere=='N') {
+                        if(_aux_csv_line->longit.hemisphere=='W')
+                              _aux_csv_line->ordering_identifier=(-_aux_csv_line->longit.angle+_aux_csv_line->lat.angle);
+                        else
+                              _aux_csv_line->ordering_identifier=(_aux_csv_line->longit.angle+_aux_csv_line->lat.angle);
+                   }
+                   else{
+                        if(_aux_csv_line->longit.hemisphere=='W')
+                              _aux_csv_line->ordering_identifier=(-_aux_csv_line->longit.angle-_aux_csv_line->lat.angle);
+                        else
+                              _aux_csv_line->ordering_identifier=(_aux_csv_line->longit.angle-_aux_csv_line->lat.angle);
+                  }
+               }
+
+
 
       return _aux_csv_line;
 }
@@ -297,11 +283,12 @@ void PrintList(node_t *extreme, int filetype){
       node_t *aux = extreme;
       int i=0;
       //prev-tail-decreasing / next-head-increasing
-      while(aux->prev != NULL){
+      while(aux != NULL){
             PrintCompleteNode(*aux, filetype);
             aux=aux->prev;
             i++;
       }
+
       printf("TOTAL_____%d\n", i );
 }
 
@@ -321,7 +308,7 @@ int CountCities(node_t *_head){
 void freeList(node_t *_head){
       node_t *aux = _head;
 
-      while(aux->next != NULL){
+      while(aux->next!= NULL){
             aux=aux->next;
             free(aux->prev);
       }
@@ -329,7 +316,7 @@ void freeList(node_t *_head){
 }
 
 void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2], int starting_yearmonth[2] , int extremes_dates[4]){
-      node_t *aux=NULL;
+      node_t *aux=NULL, *next_aux=NULL;
       int minimum_date = starting_yearmonth[0]*10000+starting_yearmonth[1]*100;
 
       switch (filetype) {
@@ -342,6 +329,8 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                         free(aux->prev);
                         extreme->head->prev=NULL;
                   }
+                  extremes_dates[0]=extreme->head->payload.ordering_identifier;
+                  extremes_dates[1]=extreme->tail->payload.ordering_identifier;
                   //date interval
                   aux=extreme->head;
                   if(months_interval[1]==0) break;
@@ -358,14 +347,15 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                               else if(aux==extreme->tail){
                                     aux->prev->next=NULL;
                                     extreme->tail=aux->prev;
+                                    printf("TAIL");
                               }
                               else{
                                     aux->prev->next=aux->next;
                                     aux->next->prev=aux->prev;
                               }
-
+                              next_aux=aux->next;
                               free(aux);
-                              aux=aux->next;
+                              aux=next_aux;
                         }
                   }
                   extremes_dates[0]=extreme->head->payload.ordering_identifier;
@@ -373,32 +363,7 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                   break;
             case CITIES:
                   aux=extreme->head;
-                  while(aux->next!=NULL){
-                              if (((aux->payload.dt.year*10000)+(aux->payload.dt.month*100)+(aux->payload.dt.day))>minimum_date){
-                                    aux=aux->next;
-                              }
-                              else{
-                                    if(aux==extreme->head){
-                                          aux->next->prev=NULL;
-                                          extreme->head=aux->next;
-                                          extreme->head->prev=NULL;
-                                    }
-                                    else if(aux==extreme->tail){
-                                          aux->prev->next=NULL;
-                                          extreme->tail=aux->prev;
-                                    }
-                                    else{
-                                          aux->prev->next=aux->next;
-                                          aux->next->prev=aux->prev;
-                                    }
-
-                                    free(aux);
-                                    aux=aux->next;
-                              }
-                  }
-                  extremes_dates[2]=minimum_date;
-                  aux=extreme->head;
-                  while(aux->next!=NULL){
+                  while(aux!=NULL){
                               if (((aux->payload.dt.year*10000)+(aux->payload.dt.month*100)+(aux->payload.dt.day))>=minimum_date){
                                     aux=aux->next;
                               }
@@ -411,14 +376,41 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                                     else if(aux==extreme->tail){
                                           aux->prev->next=NULL;
                                           extreme->tail=aux->prev;
+                                          printf("TAIL");
                                     }
                                     else{
                                           aux->prev->next=aux->next;
                                           aux->next->prev=aux->prev;
                                     }
-
+                                    next_aux=aux->next;
                                     free(aux);
+                                    aux=next_aux;
+                              }
+                  }
+                  extremes_dates[2]=minimum_date;
+                  if(months_interval[1]==0) break;
+                  aux=extreme->head;
+                  while(aux!=NULL){
+                              if (((months_interval[0]-aux->payload.dt.month)<=0 && (months_interval[1]-aux->payload.dt.month)>=0)){
                                     aux=aux->next;
+                              }
+                              else{
+                                    if(aux==extreme->head){
+                                          aux->next->prev=NULL;
+                                          extreme->head=aux->next;
+                                          extreme->head->prev=NULL;
+                                    }
+                                    else if(aux==extreme->tail){
+                                          aux->prev->next=NULL;
+                                          extreme->tail=aux->prev;
+                                    }
+                                    else{
+                                          aux->prev->next=aux->next;
+                                          aux->next->prev=aux->prev;
+                                    }
+                                    next_aux=aux->next;
+                                    free(aux);
+                                    aux=next_aux;
                               }
                   }
                   break;

@@ -313,10 +313,12 @@ void CityCoordinateCalculator(node_t *_head, int *pt_x, int *pt_y,int *pixel_coo
                   pixel_coord_cities[0][i]=*pt_x;
                   pixel_coord_cities[1][i]=*pt_y;
                   temp_cities[0][i] = aux->payload.temperature;
+                  cities_names[i]=aux->payload.city;
                   //printf("%d  %d\n", pixel_coord_cities[0][i], pixel_coord_cities[1][i]  );
-                  //printf("%s\n", aux->payload.city);
+                  printf("%s\n", aux->payload.city);
                   i++;
             }
+            cities_names[i]=aux->payload.city;
 
 
             if (number_of_cities<=i){
