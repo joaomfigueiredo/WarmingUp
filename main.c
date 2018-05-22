@@ -86,18 +86,19 @@ int main(int argc, char *argv[]){
       pixel_coord_cities[1]=calloc(number_of_cities,sizeof(int));
       temp_cities[0]=calloc(number_of_cities,sizeof(float));
 
-      for ( i=0; i<number_of_cities; i++){
-            cities_names[i]=calloc(number_of_cities,BUFFER_SIZE*sizeof(char));
-      }
+    for ( i=0; i<number_of_cities; i++){
+          cities_names[i]=calloc(number_of_cities,BUFFER_SIZE*sizeof(char));
+    }
 
 
       CityCoordinateCalculator(extremes_cities->head, &pt_x, &pt_y,pixel_coord_cities, number_of_cities, temp_cities,cities_names);
-      for(i=0; i<number_of_cities; i++){
+   /*   for(i=0; i<number_of_cities; i++){
             printf("%s\n", cities_names[i] );
             printf("%d____%d\n", pixel_coord_cities[0][i], pixel_coord_cities[1][i] );
       }
+	*/
 
-      printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
+    printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
 
       if (mode==TEXTUAL){
 	      while(1){
@@ -164,33 +165,32 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
       }
 
-      printf("Temp %d\n\n", T);
-      printf("ano %d\n\n", ano);
-      printf("meses %d\n\n", months);
-	printf("AGORA%d\n",extremes_countries->head->payload.ordering_identifier);
-      printf("%d\n", extremes_dates[0] );
+	printf("Temp %d\n\n", T);
+	printf("ano %d\n\n", ano);
+	printf("meses %d\n\n", months);
+	
+	
+		//PrintList(extremes_countries->tail, COUNTRIES);
+	//PrintList(extremes_cities->tail, CITIES);
+	CountCities(extremes_cities->tail);
+	
+	
+	freeList(extremes_cities->head);
+	printf("%s\n","cidades freed" );
+	freeList(extremes_countries->head);
+	printf("%s\n","paises freed" );
+		
+	//free(cities_names);
+	// for (i=0; i<number_of_cities; i++){
+		// free(++cities_names[i]);
+	// }
 
-	//PrintList(extremes_countries->tail, COUNTRIES);
-      //PrintList(extremes_cities->tail, CITIES);
-      CountCities(extremes_cities->tail);
 
-
-      freeList(extremes_cities->head);
-      printf("%s\n","cidades freed" );
-      freeList(extremes_countries->head);
-      printf("%s\n","paises freed" );
-
-      //free(cities_names);
-      // for (i=0; i<number_of_cities; i++){
-            // free(++cities_names[i]);
-      // }
-
-
-      printf("%s\n", "nomes das cidades freed" );
-      free(pixel_coord_cities[0]);
-      free(pixel_coord_cities[1]);
-      free(temp_cities[0]);
-      free(extremes_cities);
-      free(extremes_countries);
-      return EXIT_SUCCESS;
+	printf("%s\n", "nomes das cidades freed" );
+	free(pixel_coord_cities[0]);
+	free(pixel_coord_cities[1]);
+	free(temp_cities[0]);
+	free(extremes_cities);
+	free(extremes_countries);
+	return EXIT_SUCCESS;
 }

@@ -114,6 +114,7 @@ data_temp_t* CsvToStruct(char *_buffer, data_temp_t* _aux_csv_line, int _filetyp
               if(_filetype==COUNTRIES){
                     aux = strtok(NULL, "\n");
                     strcpy(_aux_csv_line->country, aux);
+                    _aux_csv_line->country[strlen(_aux_csv_line->country)-1]=0;
                     return _aux_csv_line;
               }
               else{
@@ -418,4 +419,17 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
                   break;
       }
 
+}
+
+void RevertConcatenation(int concatenateddate){
+	date_t* aux= NULL;
+	
+		printf("ENTROU");
+        aux->year=concatenateddate/10000;
+		aux->day=concatenateddate%10000;
+		aux->month=(concatenateddate-(aux->day)-((aux->year)*10000));
+		
+		printf("ANO%d_MES%d__DIA%d", aux->year, aux->month, aux->day);
+	
+//	return aux;
 }

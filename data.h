@@ -22,7 +22,7 @@
 
 #define GLOBAL 1
 #define PER_COUNTRY 2
-#define PER_CITY 2
+#define PER_CITY 3
 
 #define COUNTRIES 0
 #define CITIES 1
@@ -67,7 +67,9 @@ typedef struct data_temp{
 typedef struct temp_hist{
 	int begin_period;
 	int end_period;
-	int average;
+	date_t begin_date;
+	date_t end_date;
+	float average;
 	int num_of_val;
 	float maximum_temp;
 	float minimum_temp;

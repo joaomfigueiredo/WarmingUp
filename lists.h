@@ -24,5 +24,7 @@ void ConditionalNodeDeleter(list_t *, int, int[2], int [2], int [4]);
 int CountCities(node_t *);
 
 void freeList(node_t*);
+void RevertConcatenation(int);
+
 
 #endif

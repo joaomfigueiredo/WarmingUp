@@ -59,12 +59,39 @@ void TreatmentDataFilter(int* aux_df, int starting_yearmonth[2], int monthspan[2
 }
 
 
-void PrintTH(node_th_t *extreme){
+void PrintTH(node_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
       node_th_t *aux = extreme;
-
+      int i=0;
+      char c=0;
+      
+      if(aux->payload.num_of_val==0){
+		printf("Não foram encontrados dados sobre %s que permitissem a análise requerida", place_in_analysis);
+		return;
+	}
+	
+	printf("_____________________%s_____________________\nInicio periodo, Fim periodo, temp max, temp min, media\n",place_in_analysis );
+      
       while(aux->next!= NULL){
-            printf("%d--%d--tempMAX__%f\n",aux->payload.begin_period, aux->payload.end_period, aux->payload.maximum_temp );
+            printf("%d,%d,%f,%f,%f\n",aux->payload.begin_period, aux->payload.end_period, aux->payload.maximum_temp,aux->payload.minimum_temp, (aux->payload.average/aux->payload.num_of_val) );
+           // RevertConcatenation(aux->payload.begin_period);
             aux=aux->next;
+            i++;
+            if (i==20){
+			while(1){ 
+				printf("Introduz 'a' para ver mais 20 ou 'q' para sair: ");
+				c = getchar();
+				
+				if (c=='q'){
+					return;
+				}
+				else if(c=='a') {
+					i=0;
+					break;
+				}
+				else{}
+			}	
+			
+		}	
       }
 }
 
@@ -78,7 +105,6 @@ void TreatmentTemperatureHistory(list_t *extremes_countries,int  T,int auxth,cha
       int i=0, num_of_periods=0;
 
       PrintCompleteNode(*aux, COUNTRIES);
-
 
       temp_hist_list = (list_th_t*)malloc(sizeof(list_th_t));
             if (temp_hist_list== NULL){
@@ -101,28 +127,46 @@ void TreatmentTemperatureHistory(list_t *extremes_countries,int  T,int auxth,cha
                   delayed_aux=newNode;
             }
       }
-      PrintTH(temp_hist_list->head);
-
-      PrintCompleteNode(*aux, COUNTRIES);
+ 
+     // PrintCompleteNode(*aux, COUNTRIES);
 
       while(aux->next != NULL){
-      th_list_iterator=temp_hist_list->head;
+		th_list_iterator=temp_hist_list->head;
+		if(auxth==PER_COUNTRY){
+			if (strcmp(place_in_analysis, aux->payload.country)!=0){ 
+				aux=aux->next;
+				continue;
+			}
+			 
+		}
+		
+		//printf("%s___%s___\n", place_in_analysis, aux->payload.country);
+	
             while(th_list_iterator != NULL){
-                  //printf("%d___%d\n", aux->payload.ordering_identifier,th_list_iterator->payload.begin_period);
-                  if(aux->payload.ordering_identifier>=th_list_iterator->payload.begin_period && aux->payload.ordering_identifier<=th_list_iterator->payload.end_period){
-                        printf("YYYYYYY");
-                        if(aux->payload.temperature>th_list_iterator->payload.maximum_temp){
+			//test if the value of  countries list belongs to the selected period, if not triy to fit it in another period
+                  if(aux->payload.ordering_identifier>=th_list_iterator->payload.begin_period
+				&& aux->payload.ordering_identifier<th_list_iterator->payload.end_period){
+				//checks for a new max_temperature
+				if((aux->payload.temperature > th_list_iterator->payload.maximum_temp) ||(th_list_iterator->payload.maximum_temp==0)){
                               th_list_iterator->payload.maximum_temp=aux->payload.temperature;
-                              printf("XXXXXX");
-                              break;
                         }
+                        //checks for a new min_temperature
+                        if((aux->payload.temperature < th_list_iterator->payload.minimum_temp) ||(th_list_iterator->payload.minimum_temp==0)){
+                              th_list_iterator->payload.minimum_temp=aux->payload.temperature;
+				}
+				
+				th_list_iterator->payload.average =th_list_iterator->payload.average+ aux->payload.temperature;
+				th_list_iterator->payload.num_of_val++;
+                              
+                        //if it fits here doesn't fit anywhere else
+                        break;
                   }
                   th_list_iterator=th_list_iterator->next;
             }
             aux=aux->next;
       }
-      printf("SEGUNDO PRINT");
-      PrintTH(temp_hist_list->head);
+      
+      PrintTH(temp_hist_list->head, place_in_analysis);
 
       free(temp_hist_list);
 
@@ -138,10 +182,13 @@ node_th_t* NewTHListNode(int i,int T){
             printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of a TH node.");
             exit(EXIT_FAILURE);
       }
-printf("%s\n","FUNCIONAAAAAAAAAAAAAAAAAA" );
-      newNode-> payload.begin_period= i;
+	
+	newNode-> payload.average=0;
+	newNode-> payload.num_of_val=0;
+	newNode-> payload.maximum_temp = 0; // usefull to understand if any of the values was updated later
+	newNode-> payload.minimum_temp = 0;
+	newNode-> payload.begin_period= i;
       newNode-> payload.end_period=i+(T*10000);
-      printf("%d %d \n",newNode-> payload.begin_period,newNode-> payload.end_period );
       newNode-> next = NULL;
       newNode-> prev = NULL;
 
