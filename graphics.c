@@ -172,8 +172,8 @@ int RenderTable( int _board_pos_x, int _board_pos_y, int _board_size_px[],
         TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, int _board[][MAX_BOARD_POS], int moves[][MAX_BOARD_POS]){
     SDL_Color dark = { 255, 255, 255 };
     SDL_Texture *table_texture;
-    SDL_Rect tableSrc, tableDest, board, board_square;
-    int height, square_size_px;
+    SDL_Rect tableSrc, tableDest, board/*, board_square*/;
+    int /*height,*/ square_size_px=0;
 
     // set color of renderer to some color
     SDL_SetRenderDrawColor( _renderer, 255, 255, 255, 255 );
@@ -193,15 +193,15 @@ int RenderTable( int _board_pos_x, int _board_pos_y, int _board_size_px[],
     SDL_RenderCopy(_renderer, table_texture, &tableSrc, &tableDest);
 
     // render the IST Logo
-    height = RenderLogo(TABLE_SIZE, 0, _img[1], _renderer);
+    /*height = */RenderLogo(TABLE_SIZE, 0, _img[1], _renderer);
 
-    height = RenderLogo(TABLE_SIZE, 150, _img[2], _renderer);
+    /*height = */RenderLogo(TABLE_SIZE, 150, _img[2], _renderer);
 
-    height = RenderLogo(TABLE_SIZE, 265, _img[3], _renderer);
+    /*height = */RenderLogo(TABLE_SIZE, 265, _img[3], _renderer);
 
-    height = RenderLogo(TABLE_SIZE, 380, _img[4], _renderer);
+    /*height = */RenderLogo(TABLE_SIZE, 380, _img[4], _renderer);
 
-    height = RenderLogo(TABLE_SIZE, 500, _img[5], _renderer);
+    /*height = */RenderLogo(TABLE_SIZE, 500, _img[5], _renderer);
 
     // render the student name
     //height += RenderText(TABLE_SIZE+3*MARGIN, height, myName, _font, &black, _renderer);

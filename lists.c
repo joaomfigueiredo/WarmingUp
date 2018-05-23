@@ -421,15 +421,31 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
 
 }
 
+
+//TO BE REMOVED
 void RevertConcatenation(int concatenateddate){
 	date_t* aux= NULL;
-	
+
 		printf("ENTROU");
         aux->year=concatenateddate/10000;
 		aux->day=concatenateddate%10000;
 		aux->month=(concatenateddate-(aux->day)-((aux->year)*10000));
-		
+
 		printf("ANO%d_MES%d__DIA%d", aux->year, aux->month, aux->day);
-	
+
 //	return aux;
+}
+
+void ReLoadFiles(char files[2][50],list_t* extremes_countries, list_t* extremes_cities, int extremes_dates[]){
+
+      freeList(extremes_cities->head);
+      freeList(extremes_countries->head);
+
+      fprintf(stderr,ANSI_COLOR_WARNINGS "RE_LOADING AND SORTING COUNTRIES" ANSI_COLOR_RESET);
+      LoadTempCountries(files[0], extremes_countries, extremes_dates,COUNTRIES);
+      fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCOUNTRIES ARE NOW LOADED AND SORTED\n" ANSI_COLOR_RESET);
+
+      fprintf(stderr,"RE_LOADING AND SORTING CITIES");
+      LoadTempCities(files[1], extremes_cities, extremes_dates, CITIES);
+      fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCITIES ARE NOW LOADED AND SORTED\n" ANSI_COLOR_RESET);
 }

@@ -15,7 +15,7 @@ const char myNumber[] = "Golo";
 const int colors[3][MAX_COLORS] = {{246, 52, 255, 186, 124},{255, 211, 0, 0, 39},{37, 21, 0, 93, 137}};
 
 int main(int argc, char *argv[]){
-      int i=0, j=0;
+      int i=0;
 
       int aux_ms = 0; // 0- parametrizar as funçoes||||| 1-executando e voltando
       int mode = 0;
@@ -92,34 +92,60 @@ int main(int argc, char *argv[]){
 
 
       CityCoordinateCalculator(extremes_cities->head, &pt_x, &pt_y,pixel_coord_cities, number_of_cities, temp_cities,cities_names);
-   /*   for(i=0; i<number_of_cities; i++){
+      /*for(i=0; i<number_of_cities; i++){
             printf("%s\n", cities_names[i] );
             printf("%d____%d\n", pixel_coord_cities[0][i], pixel_coord_cities[1][i] );
       }
 	*/
 
-    printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
+      // printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
 
       if (mode==TEXTUAL){
 	      while(1){
                   if ( (aux_ms == 1)) break;
 
                   MenuSurfer(&T, &ano, &months, &aux_df, &aux_ms, &auxth, place_in_analysis);
-                  printf("T___%d__auxth____%d____%s__\n",T, auxth, place_in_analysis );
 
                   while (aux_df != 0){
+
+                        if (aux_df==3 && months_interval[0]!=0){
+                              ReLoadFiles(files,extremes_countries, extremes_cities, extremes_dates);
+                        }
+
                         TreatmentDataFilter(&aux_df, starting_yearmonth, months_interval);
+
+                        if (aux_df==1){
+                              ReLoadFiles(files,extremes_countries, extremes_cities, extremes_dates);
+                              aux_df=0;
+                              break;
+                        }
+
+                        if (aux_df==2 && starting_yearmonth[0]*10000+starting_yearmonth[1]*100<extremes_dates[0]){
+                              ReLoadFiles(files,extremes_countries, extremes_cities, extremes_dates);
+                        }
+
                         ConditionalNodeDeleter(extremes_countries, COUNTRIES,months_interval,starting_yearmonth, extremes_dates);
+
                         ConditionalNodeDeleter(extremes_cities, CITIES,months_interval,starting_yearmonth, extremes_dates);
-                        printf("%s\n", "DELETEEEEED");
-                        PrintCompleteNode(*extremes_countries->head, COUNTRIES);
+
                         aux_df=0;
                   }
                   while (auxth!=0){
-
-                        TreatmentTemperatureHistory(extremes_countries, T, auxth, place_in_analysis, extremes_dates);
+                        switch (auxth) {
+                              case GLOBAL:
+                                    TempHistGLOBAL_COUNTRIES(extremes_countries, T, auxth, place_in_analysis, extremes_dates);
+                                    break;
+                              case PER_COUNTRY:
+                                    TempHistGLOBAL_COUNTRIES(extremes_countries, T, auxth, place_in_analysis, extremes_dates);
+                                    break;
+                              case PER_CITY:
+                                    TempHistCITIES(extremes_cities, T, auxth, place_in_analysis, extremes_dates);
+                                    break;
+                              default:
+                                    break;
+                        }
                         auxth=0;
-                        printf("SAIUUUU\n" );
+
                   }
 	      }
       }
@@ -165,32 +191,24 @@ int main(int argc, char *argv[]){
             exit(EXIT_FAILURE);
       }
 
-	printf("Temp %d\n\n", T);
-	printf("ano %d\n\n", ano);
-	printf("meses %d\n\n", months);
-	
-	
-		//PrintList(extremes_countries->tail, COUNTRIES);
+	//PrintList(extremes_countries->tail, COUNTRIES);
 	//PrintList(extremes_cities->tail, CITIES);
-	CountCities(extremes_cities->tail);
-	
-	
+	//CountCities(extremes_cities->tail);
+
+
 	freeList(extremes_cities->head);
-	printf("%s\n","cidades freed" );
 	freeList(extremes_countries->head);
-	printf("%s\n","paises freed" );
-		
 	//free(cities_names);
 	// for (i=0; i<number_of_cities; i++){
 		// free(++cities_names[i]);
 	// }
-
-
-	printf("%s\n", "nomes das cidades freed" );
 	free(pixel_coord_cities[0]);
 	free(pixel_coord_cities[1]);
 	free(temp_cities[0]);
 	free(extremes_cities);
 	free(extremes_countries);
+
+
+      printf("Reached EOP\n");
 	return EXIT_SUCCESS;
 }

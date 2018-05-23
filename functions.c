@@ -3,6 +3,7 @@
 #include <string.h>
 #include "functions.h"
 #include "data.h"
+#include "lists.h"
 
 
 /*int myscannoerrorsforintvecs (int _vector[MAX_STR], int strsize, int _min, int _max ){

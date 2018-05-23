@@ -26,5 +26,6 @@ int CountCities(node_t *);
 void freeList(node_t*);
 void RevertConcatenation(int);
 
+void ReLoadFiles(char[2][50],list_t* , list_t* , int []);
 
 #endif
