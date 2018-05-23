@@ -107,7 +107,7 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
       return _mode;
 }
 
-void MenuSurfer(int* T, int* ano, int* months, int* aux_df, int* aux_ms, int* _auxth, char place_in_analysis[BUFFER_SIZE]){
+void MenuSurfer(int* T, int* ano, int* aux_df, int* aux_ms, int* _auxth,int* aux_ma, int* months_MA, char place_in_analysis[BUFFER_SIZE]){
 
       switch (MainMenu()) {
                         case 0:
@@ -126,7 +126,7 @@ void MenuSurfer(int* T, int* ano, int* months, int* aux_df, int* aux_ms, int* _a
                             break;
                         case 4:
                             *aux_ms = 1;
-                            GlobalTempAnalise(months);
+                            GlobalTempAnalise(months_MA, aux_ma, place_in_analysis);
                             break;
                         default:
                             break;
@@ -220,13 +220,36 @@ int YearTempAnalise(int* ano){
      return _auxyta;
 }
 
-int GlobalTempAnalise(int* months){
-     //ESTA FUNÇÃO PODERÁ SER VOID DEPENDENDO DO RUMO DO PROGRAMA MAS VEREMOS DEPOIS
+void GlobalTempAnalise(int* months_MA, int* _aux_ma, char place_in_analysis[BUFFER_SIZE]){
 
      printf("Quantos meses pretende utilizar no cálculo do MA? ");
-     myscanint ( months, 0, 1000);
+     myscanint (months_MA, 0, 99);
 
-     return EXIT_SUCCESS;
+     printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU ANALISE GLOBAL DE TEMPERATURA:\n\n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_WHITE "1 - Aumento da temperatura global do planeta?\n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_GREEN "2 - Aumento da temperatura global de um pais?\n" ANSI_COLOR_RESET);
+     printf(ANSI_COLOR_BOLD_CYAN "3 - Aumento da temperatura global de uma cidade?\n" ANSI_COLOR_RESET);
+
+     printf("\n Escolha a opção: ");
+     myscanint (_aux_ma, 0, 4);
+
+     switch (*_aux_ma) {
+           case 1:
+            break;
+           case 2:
+            printf("Introduza o nome do país a analisar: ");
+            myscanstring(place_in_analysis);
+            break;
+           case 3:
+            printf("Introduza a cidade a analisar: " );
+            myscanstring(place_in_analysis);
+            break;
+           default:
+            break;
+     }
+
+
+
 
 }
 
