@@ -15,46 +15,48 @@ const char myNumber[] = "Golo";
 const int colors[3][MAX_COLORS] = {{246, 52, 255, 186, 124},{255, 211, 0, 0, 39},{37, 21, 0, 93, 137}};
 
 int main(int argc, char *argv[]){
-      int i=0;
+    int i=0;
 
-      int aux_ms = 0, auxth = 0, aux_df = 0, aux_ma=0; //store user selections in menus
-      int mode = 0;
+    int aux_ms = 0, auxth = 0, aux_df = 0, aux_ma=0; //store user selections in menus
+    int mode = 0;
 	int T = 0; //periodo de analise para historico de temperaturas
-      int ano = 0;
-      int months_MA;
+    int ano = 0;
+    int months_MA;
+    int checkpoints_ma[5]={1860, 1910, 1960, 1990, 2013};
+
+    int starting_yearmonth[2] = {0}; //vetor que guarda, nesta ordem, o ano e o mês em que o estudo começa
+    int months_interval[2] = {0};
+    char files[2][FILENAME_SIZE]={{0}};
 
 
-      int starting_yearmonth[2] = {0}; //vetor que guarda, nesta ordem, o ano e o mês em que o estudo começa
-      int months_interval[2] = {0};
-      char files[2][FILENAME_SIZE]={{0}};
-      int board_pos_x = 0;
-      int board_pos_y = 0;
-      int square_size_px = 0;
-      int board_size_px[2] = {0};
-      int board[MAX_BOARD_POS][MAX_BOARD_POS] = {{0}};
-      int moves[MAX_BOARD_POS][MAX_BOARD_POS] = {{0}}; // guarda os moves
-      int delay = 300;
-      int pt_x = 0;
-      int pt_y = 0;
+    int board_pos_x = 0;
+    int board_pos_y = 0;
+    int square_size_px = 0;
+    int board_size_px[2] = {0};
+    int board[MAX_BOARD_POS][MAX_BOARD_POS] = {{0}};
+    int moves[MAX_BOARD_POS][MAX_BOARD_POS] = {{0}}; // guarda os moves
+    int delay = 300;
+    int pt_x = 0;
+    int pt_y = 0;
 
 
-      list_t* extremes_countries = NULL;
-      list_t* extremes_cities = NULL;
-      int number_of_cities=NULL, *pixel_coord_cities[2];
-      char *cities_names[BUFFER_SIZE];
-      int extremes_dates[4]={0};//stores in 0 and 1 coutires minimum_date and maximum date and in 2 and 3 about CITIES
-      float *temp_cities[1];
-      char place_in_analysis[BUFFER_SIZE]={0};
-      //Declarações para os graphics// initialize graphics
-     int quit = 0;
-     int width = (TABLE_SIZE + LEFT_BAR_SIZE);
-     int height = TABLE_SIZE;
-     SDL_Window *window = NULL;
-     SDL_Renderer *renderer = NULL;
-     TTF_Font *serif = NULL;
-     TTF_Font *sans = NULL; //nova fonte
-     SDL_Surface *imgs[6];
-     SDL_Event event;
+    list_t* extremes_countries = NULL;
+    list_t* extremes_cities = NULL;
+    int number_of_cities=0, *pixel_coord_cities[2];
+    char *cities_names[BUFFER_SIZE];
+    int extremes_dates[4]={0};//stores in 0 and 1 coutires minimum_date and maximum date and in 2 and 3 about CITIES
+    float *temp_cities[1];
+    char place_in_analysis[BUFFER_SIZE]={0};
+    //Declarações para os graphics// initialize graphics
+    int quit = 0;
+    int width = (TABLE_SIZE + LEFT_BAR_SIZE);
+    int height = TABLE_SIZE;
+    SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+    TTF_Font *serif = NULL;
+    TTF_Font *sans = NULL; //nova fonte
+    SDL_Surface *imgs[6];
+    SDL_Event event;
 
 
  //------------------------INITIALIZATIONS-------------------------------------------------//
@@ -148,7 +150,20 @@ int main(int argc, char *argv[]){
                   }
                   while(aux_ma!=0){
                         printf("%d  %s  %d  --------------TOBEDONE----------\n\n\n", aux_ma, place_in_analysis, months_MA);
+                        switch (auxth) {
+                              case GLOBAL:
+
+                                    break;
+                              case PER_COUNTRY:
+
+                                    break;
+                              case PER_CITY:
+
+                                    break;
+                              default:
+                                    break;
                         aux_ma=0;
+                    }
                   }
 
 

@@ -219,11 +219,11 @@ void TempHistCITIES(list_t *extremes_cities,int  T,int auxth,char place_in_analy
 
             while(th_list_iterator != NULL){
 			//test if the value of  countries list belongs to the selected period, if not triy to fit it in another period
-                  if(concatenateddate>=th_list_iterator->payload.begin_period
+                if(concatenateddate>=th_list_iterator->payload.begin_period
 				&& concatenateddate<th_list_iterator->payload.end_period){
-                        printf("%d\n", concatenateddate);
-				//checks for a new max_temperature
-				if((aux->payload.temperature > th_list_iterator->payload.maximum_temp) ||(th_list_iterator->payload.maximum_temp==0)){
+                    //printf("%d\n", concatenateddate);
+				    //checks for a new max_temperature
+				    if((aux->payload.temperature > th_list_iterator->payload.maximum_temp) ||(th_list_iterator->payload.maximum_temp==0)){
                               th_list_iterator->payload.maximum_temp=aux->payload.temperature;
                         }
                         //checks for a new min_temperature
@@ -268,4 +268,8 @@ node_th_t* NewTHListNode(int i,int T){
       newNode-> prev = NULL;
 
       return newNode;
+}
+
+void MovingAverage(){
+
 }

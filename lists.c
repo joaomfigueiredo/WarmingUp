@@ -433,7 +433,7 @@ void RevertConcatenation(int concatenateddate){
 
 		printf("ANO%d_MES%d__DIA%d", aux->year, aux->month, aux->day);
 
-//	return aux;
+    //return aux;
 }
 
 void ReLoadFiles(char files[2][50],list_t* extremes_countries, list_t* extremes_cities, int extremes_dates[]){
