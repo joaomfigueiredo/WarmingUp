@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
      SDL_Event event;
 
 
-
+ //------------------------INITIALIZATIONS-------------------------------------------------//
       mode = ParamReading(argc, argv, files);
 
       extremes_countries = (list_t*)malloc(sizeof(list_t));
@@ -86,12 +86,15 @@ int main(int argc, char *argv[]){
       pixel_coord_cities[1]=calloc(number_of_cities,sizeof(int));
       temp_cities[0]=calloc(number_of_cities,sizeof(float));
 
-    for ( i=0; i<number_of_cities; i++){
+      for ( i=0; i<number_of_cities; i++){
           cities_names[i]=calloc(number_of_cities,BUFFER_SIZE*sizeof(char));
-    }
-
+      }
 
       CityCoordinateCalculator(extremes_cities->head, &pt_x, &pt_y,pixel_coord_cities, number_of_cities, temp_cities,cities_names);
+//----------------END OF INITIALIZATIONS-------------------------------------------------//
+
+
+
       /*for(i=0; i<number_of_cities; i++){
             printf("%s\n", cities_names[i] );
             printf("%d____%d\n", pixel_coord_cities[0][i], pixel_coord_cities[1][i] );
