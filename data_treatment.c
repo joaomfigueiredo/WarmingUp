@@ -273,9 +273,87 @@ node_th_t* NewTHListNode(int i,int T){
       return newNode;
 }
 
+node_th_t* NewTHListNode_YA(){
+      node_th_t *newNode=NULL;
+
+      newNode = (node_th_t*)malloc(sizeof(node_th_t));
+
+      if (newNode == NULL){
+            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of a TH node.");
+            exit(EXIT_FAILURE);
+      }
+
+	
+	newNode-> payload.average=0;
+	newNode-> payload.num_of_val=0;
+	newNode-> payload.maximum_temp = 0; 
+	newNode-> payload.minimum_temp = 0;
+    newNode-> next = NULL;
+    newNode-> prev = NULL;
+
+      return newNode;
+}
+
+
+
+
 void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries){
     //char warmest[20][BUFFER_SIZE], coolest[20][BUFFER_SIZE], greatest_amp[20][BUFFER_SIZE];
+    list_th_t *list_places=NULL;
+    node_t *aux = NULL, *aux_newlist=NULL;
+    node_th_t *newNode=NULL;/* *delayed_aux=NULL, *th_list_iterator=NULL;*/
+    auxyta++;//to correspond to define vars for per country and per city;
+    
+    int i=0, num_of_periods=0, concatenateddate=0;
 
+    list_places = (list_th_t*)malloc(sizeof(list_th_t));
+          if (list_places == NULL){
+                printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of list_places!");
+                exit(EXIT_FAILURE);
+          }
+    list_places->head=NULL;
+    
+	if(auxyta==PER_COUNTRY){
+		aux=extremes_countries->head;
+		while(aux!=NULL){
+			if(list_places->head==NULL){
+
+				list_places->head=NewTHListNode_YA();
+				strcmp(list_places->head.payload.place, aux->payload.country);
+				aux_newlist->payload.average+=aux->payload.temperature;
+					aux_newlist->payload.num_of_val++;
+					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
+							aux_newlist->payload.maximum_temp=aux->payload.temperature;
+					}
+					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
+							aux_newlist->payload.minimum_temp=aux->payload.temperature;
+					}
+				aux=aux->next;
+				continue;
+			}
+			
+			aux_newlist=list_places->head;
+			while(aux_newlist!=NULL){
+				if (strcmp(aux_newlist->payload.place,aux->payload.country)==0){
+					aux_newlist->payload.average+=aux->payload.temperature;
+					aux_newlist->payload.num_of_val++;
+					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
+							aux_newlist->payload.maximum_temp=aux->payload.temperature;
+					}
+					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
+							aux_newlist->payload.minimum_temp=aux->payload.temperature;
+					}
+				break;
+				} 
+				aux_newlist=aux_newlist->next;
+			}
+			aux=aux->next;
+		}
+	}
+	
+	else if(auxyta==PER_CITY){
+		aux=extremes_cities->head;
+	}
 
 
 

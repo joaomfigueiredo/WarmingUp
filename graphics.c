@@ -323,7 +323,7 @@ void RenderPoints(TTF_Font *segment,list_t* extremes_cities, int *pixel_coord_ci
 	//it uses the information that citycoordinatecalculator calculate 
 
 	node_t *aux = extremes_cities->head;
-	 int delay = 300;
+	 int delay = 30;
      int circleX = 0;
      int circleY = 0;
      int circleR = 0;
@@ -343,7 +343,7 @@ void RenderPoints(TTF_Font *segment,list_t* extremes_cities, int *pixel_coord_ci
 	 for ( k = min; k < max; k++){
 		 for ( f = 01; f < 13; f++){
 			
-					RenderTable( board_size_px, serif, imgs, renderer);
+
 			 RenderCounterOnScreen(_renderer, segment, k, f); //Render the counter to show the date displayed
 
 			 for ( i = 0; i < number_of_cities; i++){
@@ -366,7 +366,7 @@ void RenderPoints(TTF_Font *segment,list_t* extremes_cities, int *pixel_coord_ci
 				aux = extremes_cities->head;
 			}
 			SDL_RenderPresent(_renderer);
-			//SDL_Delay(delay);
+			SDL_Delay(delay);
 		}
 	}
 }

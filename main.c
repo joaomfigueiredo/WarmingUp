@@ -29,7 +29,7 @@ int main(int argc, char *argv[]){
 
     int square_size_px = 0;
     int board_size_px[2] = {0};
-    int delay = 300;
+    //int delay = 300;
     int pt_x = 0;
     int pt_y = 0;
 
