@@ -60,7 +60,7 @@ void TreatmentDataFilter(int* aux_df, int starting_yearmonth[2], int monthspan[2
 void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
       node_th_t *aux = extreme->head;
       int i=0;
-      char c=0;
+      char c[10];
 
       if(extreme->head->payload.num_of_val==0 && extreme->tail->payload.num_of_val==0){
 		printf("Não foram encontrados dados sobre %s que permitissem a análise requerida", place_in_analysis);
@@ -82,12 +82,13 @@ void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
             if (i==20){
 			while(1){
 				printf("Introduz 'a' para ver mais 20 ou 'q' para sair: ");
-				scanf("%c", &c);
 
-				if (c=='q'){
+                        fgets(c,10,stdin);
+
+				if (c[0]=='q'){
 					return;
 				}
-				else if(c=='a') {
+				else if(c[0]=='a') {
 					i=0;
 					break;
 				}
@@ -169,6 +170,8 @@ void TempHistGLOBAL_COUNTRIES(list_t *extremes_countries,int  T,int auxth,char p
 
       PrintTH(temp_hist_list, place_in_analysis);
 
+      //
+      //freeList(temp_hist_list->head);
       free(temp_hist_list);
 
 }
@@ -277,12 +280,12 @@ void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_
       //list_t* local;
 
       if(aux_ma==PER_COUNTRY || aux_ma==GLOBAL){
-            num_years=(extremes_dates[1]/10000)-(extremes_dates[0]/10000);
+            num_years=(extremes_dates[1]/10000)-(extremes_dates[0]/10000)+1;
       }
       else if (aux_ma==PER_CITY){
-            num_years=(extremes_dates[3]/10000)-(extremes_dates[2]/10000);
+            num_years=(extremes_dates[3]/10000)-(extremes_dates[2]/10000)+1;
       }
-      printf("--------------%d------------\n", num_years);
+      //printf("--------------%d------------\n", num_years);
 
       for (i=0; i<13; i++){
             ma_array[i] = calloc(num_years,sizeof(float));
@@ -293,35 +296,14 @@ void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_
       }
       ma_unidim_array=calloc((num_years*12), sizeof(float));
 
-
       Fill_MAarray(ma_array, num_years, extremes_dates, aux_ma, extremes_cities, extremes_countries, place_in_analysis);
+      ComputeMA_permonth(ma_array, ma_unidim_array, num_years, months_MA);
+      Compute_DisplayWarming(ma_array, checkpoints_ma, extremes_dates, aux_ma);
 
-      //printf("5\n");
-      for(int j=0; j<13; j++){
-            for(int k=0; k<num_years;k++){
-                  printf("[%.2f]", ma_array[j][k]);
-            }
-            printf("\n");
-      }
-
-      if(months_MA>1) ComputeMA_permonth(ma_array, ma_unidim_array, num_years, months_MA);
-
-      for(int j=0; j<13; j++){
-            for(int k=0; k<num_years;k++){
-                  printf("[%.2f]", ma_array[j][k]);
-            }
-            printf("\n");
-      }
-
-
-
-      //printf("6\n");
       for (i=0; i<13; i++){
-            printf("%d\n",i);
-            //free(ma_array[i]);
+            free(ma_array[i]);
       }
-      //free(ma_unidim_array);
-      //printf("7\n");
+      free(ma_unidim_array);
 
 }
 
@@ -341,26 +323,27 @@ void Fill_MAarray(float *ma_array[13], int num_years, int extremes_dates[4], int
                   if (aux_ma==PER_COUNTRY){
                         if (strcmp(place_in_analysis, aux->payload.country)!=0){
                               aux=aux->next;
-                              //printf("1\n");
+
                               continue;
                         }
                         else{
+
                               ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]=aux->payload.temperature;
                               aux=aux->next;
-                              //printf("3\n");
+
                               continue;
                         }
                   }
                   else if (aux_ma==PER_CITY){
                         if (strcmp(place_in_analysis, aux->payload.city)!=0){
                               aux=aux->next;
-                              //printf("2\n");
+
                               continue;
                         }
                         else{
-                              ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[3]/10000)]=aux->payload.temperature;
+                              ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[2]/10000)]=aux->payload.temperature;
                               aux=aux->next;
-                              //printf("3\n");
+
                               continue;
                         }
                   }
@@ -371,15 +354,14 @@ void Fill_MAarray(float *ma_array[13], int num_years, int extremes_dates[4], int
             num_measures++;
 
             if (aux->next->payload.ordering_identifier!=aux->payload.ordering_identifier){
-                  //printf("sum___%f\n", ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]);
+
                   ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]=
                         ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]/num_measures;
-                  //printf("NUM___%d\n", num_measures );
-                  //printf("sum___%f\n", ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]);
+
                   num_measures=0;
             }
             aux=aux->next;
-            ////printf("4");
+
       }
 
 
@@ -393,10 +375,8 @@ void ComputeMA_permonth(float *ma_array[13], float *ma_unidim_array, int num_yea
       for(i=0;i<num_years;i++){
             for(j=1;j<13;j++){
                   ma_unidim_array[k]=ma_array[j][i];
-                  printf("(%f)", ma_unidim_array[k]);
                   k++;
             }
-            printf("\n");
       }
 
       a1=months_MA-1;
@@ -426,24 +406,31 @@ void ComputeMA_permonth(float *ma_array[13], float *ma_unidim_array, int num_yea
             }
             ma_array[0][i]=ma_array[0][i]/12;
       }
-      /*a1=0;
-      a2=0;
-      sum=0;
-      while (a1<(num_years)){
-            if (a1==(months_MA-1)){
-                  for(i=0; i<=a1;i++){
-                        sum+=ma_array[13][i];
-                  }
-                  ma_array[((a1+1)%12)][a1/12]=sum/months_MA;
-                  a1++;
-                  continue;
-            }
-            sum=sum-ma_unidim_array[a2]+ma_unidim_array[a1];
-            if (((a1+1)%12)==0)      ma_array[12][a1/12]=sum/months_MA;
-            else            ma_array[((a1+1)%12)][a1/12]=sum/months_MA;
 
-            a2++;
-            a1++;
+}
+
+void Compute_DisplayWarming(float *ma_array[13], int checkpoints_ma[5], int extremes_dates[4], int aux_ma){
+      int i=0, j=0, a=0;
+      float maximum_temp=0, minimum_temp=50;
+
+      if(aux_ma==GLOBAL || aux_ma==PER_COUNTRY){
+            i=extremes_dates[0]/10000;
+            a=extremes_dates[0]/10000;
       }
-      */
+      else if (aux_ma==PER_CITY){
+            i=extremes_dates[2]/10000;
+            a=extremes_dates[2]/10000;
+      }
+
+      while(i<2013){
+            if (maximum_temp<ma_array[0][i-a]) maximum_temp=ma_array[0][i-a];
+            if (minimum_temp>ma_array[0][i-a]) minimum_temp=ma_array[0][i-a];
+            for(j=0;j<5;j++){
+                  if (i==checkpoints_ma[j]){
+                        printf("Até %d a temperatura subiu %.2fº graus!\n",i, (maximum_temp-minimum_temp));
+                  }
+            }
+            i++;
+      }
+
 }

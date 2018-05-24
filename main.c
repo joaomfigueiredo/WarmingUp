@@ -42,7 +42,7 @@ int main(int argc, char *argv[]){
     list_t* extremes_countries = NULL;
     list_t* extremes_cities = NULL;
     int number_of_cities=0, *pixel_coord_cities[2];
-    char *cities_names[BUFFER_SIZE];
+    char **cities_names;
     int extremes_dates[4]={0};//stores in 0 and 1 coutires minimum_date and maximum date and in 2 and 3 about CITIES
     float *temp_cities[1];
     char place_in_analysis[BUFFER_SIZE]={0};
@@ -86,8 +86,9 @@ int main(int argc, char *argv[]){
       pixel_coord_cities[1]=calloc(number_of_cities,sizeof(int));
       temp_cities[0]=calloc(number_of_cities,sizeof(float));
 
+      cities_names=calloc(number_of_cities,sizeof(char*));
       for ( i=0; i<number_of_cities; i++){
-          cities_names[i]=calloc(number_of_cities,BUFFER_SIZE*sizeof(char));
+          cities_names[i]=calloc(BUFFER_SIZE,sizeof(char));
           if (cities_names[i]== NULL){
                 printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of 'cities_names'!");
                 exit(EXIT_FAILURE);
@@ -153,6 +154,7 @@ int main(int argc, char *argv[]){
                         auxth=0;
 
                   }
+
                   while(aux_ma!=0){
                         printf("%d  %s  %d  --------------TOBEDONE----------\n\n\n", aux_ma, place_in_analysis, months_MA);
 
@@ -188,7 +190,7 @@ int main(int argc, char *argv[]){
                               // todo
                               default:
                                     break;
-                }
+                }      i++; // for the last one
                   }
             }
             // render game table
@@ -211,15 +213,14 @@ int main(int argc, char *argv[]){
 	//PrintList(extremes_cities->tail, CITIES);
 	//CountCities(extremes_cities->tail);
 
-
 	freeList(extremes_cities->head);
 	freeList(extremes_countries->head);
-	//free(cities_names);
-	// for (i=0; i<number_of_cities; i++){
-		// free(++cities_names[i]);
-	// }
+	for (i=0; i<number_of_cities; i++){
+	     free(cities_names[i]);
+	}
+      free(cities_names);
 	free(pixel_coord_cities[0]);
-	free(pixel_coord_cities[1]);
+      free(pixel_coord_cities[1]);
 	free(temp_cities[0]);
 	free(extremes_cities);
 	free(extremes_countries);

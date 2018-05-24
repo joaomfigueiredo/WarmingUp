@@ -308,12 +308,12 @@ int CountCities(node_t *_head){
 
 void freeList(node_t *_head){
       node_t *aux = _head;
-
-      while(aux->next!= NULL){
-            aux=aux->next;
-            free(aux->prev);
+      node_t *aux2 = NULL;
+      while(aux != NULL){
+            aux2 = aux->next;
+            free(aux);
+            aux = aux2;
       }
-      free(aux);
 }
 
 void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2], int starting_yearmonth[2] , int extremes_dates[4]){
