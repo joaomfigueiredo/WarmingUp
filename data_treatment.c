@@ -270,6 +270,180 @@ node_th_t* NewTHListNode(int i,int T){
       return newNode;
 }
 
-void MovingAverage(){
+void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries, int months_MA){
+      float *ma_array[13], *ma_unidim_array;
+      int  num_years=0, i=0;
+      int checkpoints_ma[5]={1860, 1910, 1960, 1990, 2013};
+      //list_t* local;
 
+      if(aux_ma==PER_COUNTRY || aux_ma==GLOBAL){
+            num_years=(extremes_dates[1]/10000)-(extremes_dates[0]/10000);
+      }
+      else if (aux_ma==PER_CITY){
+            num_years=(extremes_dates[3]/10000)-(extremes_dates[2]/10000);
+      }
+      printf("--------------%d------------\n", num_years);
+
+      for (i=0; i<13; i++){
+            ma_array[i] = calloc(num_years,sizeof(float));
+            if (ma_array[i]== NULL){
+                  printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of 'ma_array'!");
+                  exit(EXIT_FAILURE);
+            }
+      }
+      ma_unidim_array=calloc((num_years*12), sizeof(float));
+
+
+      Fill_MAarray(ma_array, num_years, extremes_dates, aux_ma, extremes_cities, extremes_countries, place_in_analysis);
+
+      //printf("5\n");
+      for(int j=0; j<13; j++){
+            for(int k=0; k<num_years;k++){
+                  printf("[%.2f]", ma_array[j][k]);
+            }
+            printf("\n");
+      }
+
+      if(months_MA>1) ComputeMA_permonth(ma_array, ma_unidim_array, num_years, months_MA);
+
+      for(int j=0; j<13; j++){
+            for(int k=0; k<num_years;k++){
+                  printf("[%.2f]", ma_array[j][k]);
+            }
+            printf("\n");
+      }
+
+
+
+      //printf("6\n");
+      for (i=0; i<13; i++){
+            printf("%d\n",i);
+            //free(ma_array[i]);
+      }
+      //free(ma_unidim_array);
+      //printf("7\n");
+
+}
+
+void Fill_MAarray(float *ma_array[13], int num_years, int extremes_dates[4], int aux_ma,
+                  list_t* extremes_cities, list_t* extremes_countries,  char place_in_analysis[BUFFER_SIZE]){
+
+      node_t* aux=NULL;
+      int num_measures=0;
+      if(aux_ma==GLOBAL || aux_ma==PER_COUNTRY){
+            aux = extremes_countries->head;
+      }
+      else if(aux_ma==PER_CITY){
+            aux =extremes_cities->head;
+      }
+      while(aux->next!=NULL){
+            if (aux_ma!=GLOBAL){
+                  if (aux_ma==PER_COUNTRY){
+                        if (strcmp(place_in_analysis, aux->payload.country)!=0){
+                              aux=aux->next;
+                              //printf("1\n");
+                              continue;
+                        }
+                        else{
+                              ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]=aux->payload.temperature;
+                              aux=aux->next;
+                              //printf("3\n");
+                              continue;
+                        }
+                  }
+                  else if (aux_ma==PER_CITY){
+                        if (strcmp(place_in_analysis, aux->payload.city)!=0){
+                              aux=aux->next;
+                              //printf("2\n");
+                              continue;
+                        }
+                        else{
+                              ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[3]/10000)]=aux->payload.temperature;
+                              aux=aux->next;
+                              //printf("3\n");
+                              continue;
+                        }
+                  }
+            }
+
+            ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]+=aux->payload.temperature;
+
+            num_measures++;
+
+            if (aux->next->payload.ordering_identifier!=aux->payload.ordering_identifier){
+                  //printf("sum___%f\n", ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]);
+                  ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]=
+                        ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]/num_measures;
+                  //printf("NUM___%d\n", num_measures );
+                  //printf("sum___%f\n", ma_array[aux->payload.dt.month][aux->payload.dt.year-(extremes_dates[0]/10000)]);
+                  num_measures=0;
+            }
+            aux=aux->next;
+            ////printf("4");
+      }
+
+
+}
+
+void ComputeMA_permonth(float *ma_array[13], float *ma_unidim_array, int num_years, int months_MA){
+      int i=0, j=0, k=0;
+      int a1=0, a2=0;
+      float sum=0;
+
+      for(i=0;i<num_years;i++){
+            for(j=1;j<13;j++){
+                  ma_unidim_array[k]=ma_array[j][i];
+                  printf("(%f)", ma_unidim_array[k]);
+                  k++;
+            }
+            printf("\n");
+      }
+
+      a1=months_MA-1;
+
+
+      while (a1<(num_years*12)){
+            if (a1==(months_MA-1)){
+                  for(i=0; i<=a1;i++){
+                        sum+=ma_unidim_array[i];
+                  }
+                  if (((a1+1)%12)==0)      ma_array[12][a1/12]=sum/months_MA;
+                  else            ma_array[((a1+1)%12)][a1/12]=sum/months_MA;
+                  a1++;
+                  continue;
+            }
+            sum=sum-ma_unidim_array[a2]+ma_unidim_array[a1];
+            if (((a1+1)%12)==0)      ma_array[12][a1/12]=sum/months_MA;
+            else            ma_array[((a1+1)%12)][a1/12]=sum/months_MA;
+
+            a2++;
+            a1++;
+      }
+
+      for(i=0;i<num_years;i++){
+            for(j=1;j<13;j++){
+                  ma_array[0][i]+=ma_array[j][i];
+            }
+            ma_array[0][i]=ma_array[0][i]/12;
+      }
+      /*a1=0;
+      a2=0;
+      sum=0;
+      while (a1<(num_years)){
+            if (a1==(months_MA-1)){
+                  for(i=0; i<=a1;i++){
+                        sum+=ma_array[13][i];
+                  }
+                  ma_array[((a1+1)%12)][a1/12]=sum/months_MA;
+                  a1++;
+                  continue;
+            }
+            sum=sum-ma_unidim_array[a2]+ma_unidim_array[a1];
+            if (((a1+1)%12)==0)      ma_array[12][a1/12]=sum/months_MA;
+            else            ma_array[((a1+1)%12)][a1/12]=sum/months_MA;
+
+            a2++;
+            a1++;
+      }
+      */
 }

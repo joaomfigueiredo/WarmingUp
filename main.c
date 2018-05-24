@@ -19,10 +19,9 @@ int main(int argc, char *argv[]){
 
     int aux_ms = 0, auxth = 0, aux_df = 0, aux_ma=0; //store user selections in menus
     int mode = 0;
-	int T = 0; //periodo de analise para historico de temperaturas
+    int T = 0; //periodo de analise para historico de temperaturas
     int ano = 0;
     int months_MA;
-    int checkpoints_ma[5]={1860, 1910, 1960, 1990, 2013};
 
     int starting_yearmonth[2] = {0}; //vetor que guarda, nesta ordem, o ano e o mês em que o estudo começa
     int months_interval[2] = {0};
@@ -89,6 +88,10 @@ int main(int argc, char *argv[]){
 
       for ( i=0; i<number_of_cities; i++){
           cities_names[i]=calloc(number_of_cities,BUFFER_SIZE*sizeof(char));
+          if (cities_names[i]== NULL){
+                printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of 'cities_names'!");
+                exit(EXIT_FAILURE);
+          }
       }
 
       CityCoordinateCalculator(extremes_cities->head, &pt_x, &pt_y,pixel_coord_cities, number_of_cities, temp_cities,cities_names);
@@ -102,7 +105,7 @@ int main(int argc, char *argv[]){
       }
 	*/
 
-      // printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
+      printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
 
       if (mode==TEXTUAL){
 	      while(1){
@@ -129,6 +132,8 @@ int main(int argc, char *argv[]){
 
                         ConditionalNodeDeleter(extremes_cities, CITIES,months_interval,starting_yearmonth, extremes_dates);
 
+                        printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
+
                         aux_df=0;
                   }
                   while (auxth!=0){
@@ -150,20 +155,11 @@ int main(int argc, char *argv[]){
                   }
                   while(aux_ma!=0){
                         printf("%d  %s  %d  --------------TOBEDONE----------\n\n\n", aux_ma, place_in_analysis, months_MA);
-                        switch (auxth) {
-                              case GLOBAL:
 
-                                    break;
-                              case PER_COUNTRY:
+                        MovingAverage(aux_ma, place_in_analysis, extremes_dates, extremes_cities, extremes_countries, months_MA);
 
-                                    break;
-                              case PER_CITY:
-
-                                    break;
-                              default:
-                                    break;
                         aux_ma=0;
-                    }
+
                   }
 
 

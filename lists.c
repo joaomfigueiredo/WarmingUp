@@ -449,3 +449,17 @@ void ReLoadFiles(char files[2][50],list_t* extremes_countries, list_t* extremes_
       LoadTempCities(files[1], extremes_cities, extremes_dates, CITIES);
       fprintf(stderr,ANSI_COLOR_BOLD_GREEN "\rCITIES ARE NOW LOADED AND SORTED\n" ANSI_COLOR_RESET);
 }
+/*
+void LocalCountries(node_t *extreme, list_t* local){
+      node_t *aux = extreme, *newNode = NULL;
+
+
+
+      while(aux != NULL){
+
+
+            aux=aux->next;
+      }
+
+}
+*/
