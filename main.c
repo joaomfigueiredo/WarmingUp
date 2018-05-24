@@ -17,11 +17,11 @@ const int colors[3][MAX_COLORS] = {{246, 52, 255, 186, 124},{255, 211, 0, 0, 39}
 int main(int argc, char *argv[]){
     int i=0;
 
-    int aux_ms = 0, auxth = 0, aux_df = 0, aux_ma=0; //store user selections in menus
+    int aux_ms = 0, auxth = 0, aux_df = 0, aux_ma=0, auxyta=0; //store user selections in menus
     int mode = 0;
     int T = 0; //periodo de analise para historico de temperaturas
-    int ano = 0;
-    int months_MA;
+    int year_in_analysis = 0;
+    int months_MA=0;
 
     int starting_yearmonth[2] = {0}; //vetor que guarda, nesta ordem, o ano e o mês em que o estudo começa
     int months_interval[2] = {0};
@@ -112,7 +112,9 @@ int main(int argc, char *argv[]){
 	      while(1){
                   if ( (aux_ms == 1)) break;
 
-                  MenuSurfer(&T, &ano, &aux_df, &aux_ms, &auxth, &aux_ma, &months_MA, place_in_analysis);
+                  MenuSurfer(&T, &year_in_analysis, &aux_df, &aux_ms, &auxth, &aux_ma, &auxyta, &months_MA, place_in_analysis);
+
+                  printf("%d_____%d_____\n", auxyta, year_in_analysis);
 
                   while (aux_df != 0){
                         if (aux_df==3 && months_interval[0]!=0){

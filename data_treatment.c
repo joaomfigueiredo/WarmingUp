@@ -135,7 +135,7 @@ void TempHistGLOBAL_COUNTRIES(list_t *extremes_countries,int  T,int auxth,char p
       while(aux->next != NULL){
 		th_list_iterator=temp_hist_list->head;
 		if(auxth==PER_COUNTRY){
-			if (strcmp(place_in_analysis, aux->payload.country)!=0){
+		 if (strcmp(place_in_analysis, aux->payload.country)!=0){
 				aux=aux->next;
 				continue;
 			}
@@ -272,6 +272,17 @@ node_th_t* NewTHListNode(int i,int T){
 
       return newNode;
 }
+
+void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries){
+    //char warmest[20][BUFFER_SIZE], coolest[20][BUFFER_SIZE], greatest_amp[20][BUFFER_SIZE];
+
+
+
+
+}
+
+
+
 
 void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries, int months_MA){
       float *ma_array[13], *ma_unidim_array;
@@ -422,13 +433,18 @@ void Compute_DisplayWarming(float *ma_array[13], int checkpoints_ma[5], int extr
             a=extremes_dates[2]/10000;
       }
 
-      while(i<2013){
+      while(i<=2013){
             if (maximum_temp<ma_array[0][i-a]) maximum_temp=ma_array[0][i-a];
             if (minimum_temp>ma_array[0][i-a]) minimum_temp=ma_array[0][i-a];
             for(j=0;j<5;j++){
                   if (i==checkpoints_ma[j]){
+                        if(maximum_temp-minimum_temp==0){
+                            printf("      NO DATA AVAILABLE\n");
+                            return;
+                        }
                         printf("Até %d a temperatura subiu %.2fº graus!\n",i, (maximum_temp-minimum_temp));
                   }
+
             }
             i++;
       }

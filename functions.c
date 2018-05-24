@@ -107,7 +107,7 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
       return _mode;
 }
 
-void MenuSurfer(int* T, int* ano, int* aux_df, int* aux_ms, int* _auxth,int* aux_ma, int* months_MA, char place_in_analysis[BUFFER_SIZE]){
+void MenuSurfer(int* T, int* year_in_analysis, int* aux_df, int* aux_ms, int* _auxth,int* aux_ma, int* auxyta, int* months_MA, char place_in_analysis[BUFFER_SIZE]){
 
       switch (MainMenu()) {
                         case 0:
@@ -122,7 +122,7 @@ void MenuSurfer(int* T, int* ano, int* aux_df, int* aux_ms, int* _auxth,int* aux
                             break;
                         case 3:
                             *aux_ms = 1;
-                            YearTempAnalise(ano);
+                            YearTempAnalise(year_in_analysis, auxyta);
                             break;
                         case 4:
                             *aux_ms = 1;
@@ -202,12 +202,12 @@ void TemperatureHistory(int* T, int* _auxth, char place_in_analysis[BUFFER_SIZE]
 
 }
 
-int YearTempAnalise(int* ano){
+void YearTempAnalise(int* year_in_analysis, int* auxyta){
 
-     int _auxyta=0;
+
 
      printf("Qual o ano que pretende analisar? ");
-     myscanint ( ano, 1700, 2018);
+     myscanint ( year_in_analysis, 1700, 2018);
 
 
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU ANÁLISE DA TEMPERATURA POR ANO: \n\n" ANSI_COLOR_RESET);
@@ -215,9 +215,8 @@ int YearTempAnalise(int* ano){
      printf(ANSI_COLOR_BOLD_BLUE "2 - Análise por cidade? \n" ANSI_COLOR_RESET);
 
      printf("\n Escolha a opção: ");
-     myscanint ( &_auxyta, 0, 3);
+     myscanint ( auxyta, 0, 3);
 
-     return _auxyta;
 }
 
 void GlobalTempAnalise(int* months_MA, int* _aux_ma, char place_in_analysis[BUFFER_SIZE]){

@@ -65,12 +65,14 @@ typedef struct data_temp{
 } data_temp_t;
 
 typedef struct temp_hist{
+	char place[100];
 	int begin_period;
 	int end_period;
 	date_t begin_date;
 	date_t end_date;
 	float average;
 	int num_of_val;
+	float amplitude_temp;
 	float maximum_temp;
 	float minimum_temp;
 } temp_hist_t;
