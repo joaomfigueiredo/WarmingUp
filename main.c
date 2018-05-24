@@ -162,6 +162,10 @@ int main(int argc, char *argv[]){
 
                   }
 
+                  while(auxyta!=0){
+                        YearAnalysis(auxyta, year_in_analysis,extremes_dates,extremes_cities,extremes_countries);
+                        auxyta=0;
+                  }
 
 	      }
       }
@@ -188,7 +192,7 @@ int main(int argc, char *argv[]){
                               RenderTable( board_size_px, serif, imgs, renderer);
                               SDL_RenderPresent(renderer);
                               break;
-                              
+
                               case SDLK_9:
                                     quit = 1;
 

@@ -71,12 +71,14 @@ void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
 
       while(aux->next!= NULL){
 
-            printf("[%d,%d[",aux->payload.begin_period/10000, aux->payload.end_period/10000);
+            /*printf("[%d,%d[",aux->payload.begin_period/10000, aux->payload.end_period/10000);
             if (aux->payload.average==0){
                   printf("      NO DATA AVAILABLE\n");
             }
             else printf(",%f,%f,%f\n", (aux->payload.maximum_temp),(aux->payload.minimum_temp), (aux->payload.average/aux->payload.num_of_val));
-            // RevertConcatenation(aux->payload.begin_period);
+            // RevertConcatenation(aux->payload.begin_period);*/
+            printf("%s,%f, %f,%f, %f\n",aux->payload.place, (aux->payload.average/aux->payload.num_of_val),
+                        aux->payload.maximum_temp, aux->payload.minimum_temp, (aux->payload.maximum_temp-aux->payload.minimum_temp)) ;
             aux=aux->next;
             i++;
             if (i==20){
@@ -283,10 +285,10 @@ node_th_t* NewTHListNode_YA(){
             exit(EXIT_FAILURE);
       }
 
-	
+
 	newNode-> payload.average=0;
 	newNode-> payload.num_of_val=0;
-	newNode-> payload.maximum_temp = 0; 
+	newNode-> payload.maximum_temp = 0;
 	newNode-> payload.minimum_temp = 0;
     newNode-> next = NULL;
     newNode-> prev = NULL;
@@ -294,33 +296,42 @@ node_th_t* NewTHListNode_YA(){
       return newNode;
 }
 
-
-
-
 void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries){
     //char warmest[20][BUFFER_SIZE], coolest[20][BUFFER_SIZE], greatest_amp[20][BUFFER_SIZE];
     list_th_t *list_places=NULL;
-    node_t *aux = NULL, *aux_newlist=NULL;
-    node_th_t *newNode=NULL;/* *delayed_aux=NULL, *th_list_iterator=NULL;*/
+    node_t *aux = NULL;
+    node_th_t *newNode=NULL, *aux_newlist=NULL, *aux_to_link=NULL;/* *delayed_aux=NULL, *th_list_iterator=NULL;*/
     auxyta++;//to correspond to define vars for per country and per city;
-    
+
     int i=0, num_of_periods=0, concatenateddate=0;
+
+    printf("AAAAAAAAAAAAAAAAa\n");
 
     list_places = (list_th_t*)malloc(sizeof(list_th_t));
           if (list_places == NULL){
                 printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of list_places!");
                 exit(EXIT_FAILURE);
           }
-    list_places->head=NULL;
-    
-	if(auxyta==PER_COUNTRY){
+          printf("%s\n","BBBBBBBBBBBBBBBBBBBBBBBb" );
+
+      list_places->head=NULL;
+
+
+      printf("IIIIIIIIIIIIIIIin\n");
+
+
+      if(auxyta==PER_COUNTRY){
 		aux=extremes_countries->head;
 		while(aux!=NULL){
+                  if(aux->payload.dt.year!=year_in_analysis){
+                        aux=aux->next;
+                        continue;
+                  }
 			if(list_places->head==NULL){
-
 				list_places->head=NewTHListNode_YA();
-				strcmp(list_places->head.payload.place, aux->payload.country);
-				aux_newlist->payload.average+=aux->payload.temperature;
+				strcpy(list_places->head->payload.place, aux->payload.country);
+                        aux_newlist=list_places->head;
+            		aux_newlist->payload.average+=aux->payload.temperature;
 					aux_newlist->payload.num_of_val++;
 					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
 							aux_newlist->payload.maximum_temp=aux->payload.temperature;
@@ -328,10 +339,10 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
 							aux_newlist->payload.minimum_temp=aux->payload.temperature;
 					}
-				aux=aux->next;
-				continue;
+                        aux=aux->next;
+      			continue;
 			}
-			
+
 			aux_newlist=list_places->head;
 			while(aux_newlist!=NULL){
 				if (strcmp(aux_newlist->payload.place,aux->payload.country)==0){
@@ -343,19 +354,35 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
 							aux_newlist->payload.minimum_temp=aux->payload.temperature;
 					}
-				break;
-				} 
+                  	break;
+				}
 				aux_newlist=aux_newlist->next;
+                        if (aux_newlist==NULL){
+                              aux_to_link=list_places->head;
+                              list_places->head=NewTHListNode_YA();
+                              list_places->head->next=aux_to_link;
+                              strcpy(list_places->head->payload.place, aux->payload.country);
+                              aux_newlist=list_places->head;
+                              aux_newlist->payload.average+=aux->payload.temperature;
+      					aux_newlist->payload.num_of_val++;
+      					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
+      							aux_newlist->payload.maximum_temp=aux->payload.temperature;
+      					}
+      					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
+      							aux_newlist->payload.minimum_temp=aux->payload.temperature;
+      					}
+                        }
 			}
+
 			aux=aux->next;
 		}
 	}
-	
+
 	else if(auxyta==PER_CITY){
 		aux=extremes_cities->head;
 	}
 
-
+      PrintTH(list_places,"TESTE");
 
 }
 
