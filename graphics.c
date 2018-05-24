@@ -9,11 +9,6 @@
 #include "math.h"
 #include "graphics.h"
 
-extern const char myName[];
-extern const char myNumber[];
-extern const int colors[3][MAX_COLORS];
-
-
 void InitSDL(){
     // init SDL library
     if ( SDL_Init( SDL_INIT_EVERYTHING ) == -1 )
@@ -106,7 +101,7 @@ void InitEverything(int width, int height, TTF_Font **_font, TTF_Font **_font2, 
     _img[3] = IMG_Load("./img/sair9.png");	//inicialization of the image with the opcion quit
     if (_img[3] == NULL)
     {
-        printf("Unable to load image: %s\n", SDL_GetError()); 
+        printf("Unable to load image: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
@@ -169,14 +164,14 @@ void RenderTable( int _board_size_px[], TTF_Font *_font, SDL_Surface *_img[], SD
     tableDest.y = tableSrc.y = 0;
     tableSrc.w = _img[0]->w;
     tableSrc.h = _img[0]->h;
-    tableDest.w = TABLE_SIZE + TABLE_SIZE; 
+    tableDest.w = TABLE_SIZE + TABLE_SIZE;
     tableDest.h = TABLE_SIZE;
 
     // draws the table texture
     table_texture = SDL_CreateTextureFromSurface(_renderer, _img[0]);
     SDL_RenderCopy(_renderer, table_texture, &tableSrc, &tableDest);
 
-  
+
     RenderLogo(TABLE_SIZE, 0, _img[1], _renderer);  //renders the image of the menu
 
     RenderLogo(TABLE_SIZE, 150, _img[2], _renderer);  //renders the image of the time simulation
@@ -287,7 +282,7 @@ void CityCoordinateCalculator(node_t *_head, int *pt_x, int *pt_y,int *pixel_coo
 	//if inside the while is to make sure its not the last position and the city is different than the next, to keep record of
 	//its name and its coordinates
 	//after he execute the function clculate pos to calculate is pixel coordinates to be ready to draw it in the map
-	
+
       node_t *aux = _head;
       int i=0;
 
@@ -320,7 +315,7 @@ void CityCoordinateCalculator(node_t *_head, int *pt_x, int *pt_y,int *pixel_coo
 void RenderPoints(TTF_Font *segment,list_t* extremes_cities, int *pixel_coord_cities[2], int _board_size_px[], int _square_size_px, SDL_Renderer *_renderer, int number_of_cities, char *cities_names[BUFFER_SIZE], int extremes_dates[4] ){
 
 	//function that renders the points in the map and paint them with the respective color
-	//it uses the information that citycoordinatecalculator calculate 
+	//it uses the information that citycoordinatecalculator calculate
 
 	node_t *aux = extremes_cities->head;
 	 int delay = 30;
@@ -337,12 +332,12 @@ void RenderPoints(TTF_Font *segment,list_t* extremes_cities, int *pixel_coord_ci
      int min = 0;			//variable to calculate the min_year of the file
      int max = 0;			//variable to calculate the max_year of the file
 
-	 min = extremes_dates[2]/10000; 
+	 min = extremes_dates[2]/10000;
 	 max = extremes_dates[3]/10000;
-	
+
 	 for ( k = min; k < max; k++){
 		 for ( f = 01; f < 13; f++){
-			
+
 
 			 RenderCounterOnScreen(_renderer, segment, k, f); //Render the counter to show the date displayed
 
@@ -351,7 +346,7 @@ void RenderPoints(TTF_Font *segment,list_t* extremes_cities, int *pixel_coord_ci
 				circleX = pixel_coord_cities[0][i]+600;		//calculates the center of the circle
 				circleY = pixel_coord_cities[1][i]+300;
 				circleR = 5;
-				
+
 				while (aux->next != NULL){
 					if ((aux->payload.dt.year == k) && (aux->payload.dt.month == f) && strcmp(aux->payload.city,cities_names[i]) == 0){
 						//if this conditions are all true it means we need to fill the circle with the right rgb color
@@ -506,12 +501,12 @@ void ChoosingYear( SDL_Renderer *_renderer, TTF_Font *sans, int data_year_graphi
 	}
 	k = 0;
 	sprintf(str3, "%d",k);
-	
+
 	RenderText(rect.x+50, rect.y+30, str3, segment, &red, _renderer );
-	
+
 	k = 1;
 	SDL_RenderPresent(_renderer);
-	
+
 	//acabou aqui esta parte. agora é por uma variavel a chamar la no main pa outra funcao que vai executar a esxcrita, renderizar um quadrad
 	//de alguma cor e por la os digitos a serem digitados no momento, nao deve ser uma funçao com mais de 50 linhas ate as 10 da noite.
 	//depois é fazer o da funçao atras percorrendo o ficheiro e desenhando as bolas para os dados desse mes e ano, e implementar quando se la clica.

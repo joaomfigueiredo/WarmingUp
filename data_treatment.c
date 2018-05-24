@@ -296,25 +296,114 @@ node_th_t* NewTHListNode_YA(){
       return newNode;
 }
 
+node_th_t* THNodeCloner(node_th_t* InNode){
+    node_th_t *newNode=NULL;
+
+    newNode = (node_th_t*)malloc(sizeof(node_th_t));
+
+    if (newNode == NULL){
+          printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of a CLONE node.");
+          exit(EXIT_FAILURE);
+    }
+
+    strcpy(newNode->payload.place,InNode->payload.place);
+    newNode->payload.average=InNode->payload.average;
+    newNode->payload.num_of_val=InNode->payload.num_of_val;
+    newNode->payload.maximum_temp =InNode->payload.maximum_temp;
+    newNode->payload.minimum_temp =InNode->payload.minimum_temp;
+    newNode->next = NULL;
+    newNode->prev = NULL;
+
+    return newNode;
+}
+
+void Fill_YA_Nodes(node_th_t* aux_newlist, node_t* aux){
+    aux_newlist->payload.average+=aux->payload.temperature;
+    aux_newlist->payload.num_of_val++;
+    if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
+            aux_newlist->payload.maximum_temp=aux->payload.temperature;
+    }
+    if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
+            aux_newlist->payload.minimum_temp=aux->payload.temperature;
+    }
+}
+
+/*
+void PrintYA(int nYears, list_th_t *list_places){
+    list_th_t *Hot, *Cold, *Amp; //lists with the same nodes of list_places but sorted
+
+    Hot = (list_th_t*)malloc(sizeof(list_th_t));
+        if (Hot == NULL){
+            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Hot!");
+            exit(EXIT_FAILURE);
+        }
+    Hot->head=NULL;
+
+    Cold = (list_th_t*)malloc(sizeof(list_th_t));
+        if (Cold == NULL){
+            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Cold!");
+            exit(EXIT_FAILURE);
+        }
+    Cold->head=NULL;
+
+    Amp = (list_th_t*)malloc(sizeof(list_th_t));
+        if (Amp == NULL){
+            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Amp!");
+            exit(EXIT_FAILURE);
+        }
+    Amp->head=NULL;
+
+    while(aux!=NULL){
+        if (Hot->head==NULL){
+            Hot->head=aux;
+        }
+        if (Cold->head==NULL){
+            Cold->head=aux;
+        }
+        if (Amp->head==NULL){
+            Amp->head=aux;
+            continue
+        }
+        while(aux_in!=NULL){
+            if(aux_in->payload.smtg<aux->payload.smtg){
+                aux_to_link=
+            }
+        }
+
+        while(aux_in!=NULL){
+            if(aux_in->payload.smtg<aux->payload.smtg){
+                aux_to_link=
+            }
+        }
+
+        while(aux_in!=NULL){
+            if(aux_in->payload.smtg<aux->payload.smtg){
+                aux_to_link=
+            }
+        }
+        aux=aux->next;
+    }
+
+}
+*/
+
 void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries){
     //char warmest[20][BUFFER_SIZE], coolest[20][BUFFER_SIZE], greatest_amp[20][BUFFER_SIZE];
     list_th_t *list_places=NULL;
     node_t *aux = NULL;
-    node_th_t *newNode=NULL, *aux_newlist=NULL, *aux_to_link=NULL;/* *delayed_aux=NULL, *th_list_iterator=NULL;*/
-    auxyta++;//to correspond to define vars for per country and per city;
+    node_th_t *aux_newlist=NULL, *aux_to_link=NULL;
 
-    int i=0, num_of_periods=0, concatenateddate=0;
+    auxyta++;//to correspond to define vars for per country and per city;
 
     list_places = (list_th_t*)malloc(sizeof(list_th_t));
         if (list_places == NULL){
             printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of list_places!");
             exit(EXIT_FAILURE);
         }
-
     list_places->head=NULL;
-
+    //FILLS A LIST IN WICH EACH NODE COLLECTS ALL THE INFO OF A COUNTRU IN THE SPECIFIED YEAR
     if(auxyta==PER_COUNTRY){
-		aux=extremes_countries->head;
+	    aux=extremes_countries->head;
 		while(aux!=NULL){
                   if(aux->payload.dt.year!=year_in_analysis){
                         aux=aux->next;
@@ -324,29 +413,15 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 				list_places->head=NewTHListNode_YA();
 				strcpy(list_places->head->payload.place, aux->payload.country);
                         aux_newlist=list_places->head;
-            	aux_newlist->payload.average+=aux->payload.temperature;
-				aux_newlist->payload.num_of_val++;
-				if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
-						aux_newlist->payload.maximum_temp=aux->payload.temperature;
-				}
-				if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
-						aux_newlist->payload.minimum_temp=aux->payload.temperature;
-				}
-                        aux=aux->next;
+                        Fill_YA_Nodes(aux_newlist,aux);
+                aux=aux->next;
       			continue;
 			}
 
 			aux_newlist=list_places->head;
 			while(aux_newlist!=NULL){
 				if (strcmp(aux_newlist->payload.place,aux->payload.country)==0){
-					aux_newlist->payload.average+=aux->payload.temperature;
-					aux_newlist->payload.num_of_val++;
-					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
-							aux_newlist->payload.maximum_temp=aux->payload.temperature;
-					}
-					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
-							aux_newlist->payload.minimum_temp=aux->payload.temperature;
-					}
+					Fill_YA_Nodes(aux_newlist,aux);
                   	break;
 				}
 				aux_newlist=aux_newlist->next;
@@ -356,21 +431,14 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
                               list_places->head->next=aux_to_link;
                               strcpy(list_places->head->payload.place, aux->payload.country);
                               aux_newlist=list_places->head;
-                              aux_newlist->payload.average+=aux->payload.temperature;
-      					aux_newlist->payload.num_of_val++;
-      					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
-      							aux_newlist->payload.maximum_temp=aux->payload.temperature;
-      					}
-      					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
-      							aux_newlist->payload.minimum_temp=aux->payload.temperature;
-      					}
+                              Fill_YA_Nodes(aux_newlist,aux);
                         }
 			}
 
 			aux=aux->next;
 		}
 	}
-
+    //FILLS A LIST IN WICH EACH NODE COLLECTS ALL THE INFO OF A CITY IN THE SPECIFIED YEAR
 	else if(auxyta==PER_CITY){
         aux=extremes_cities->head;
 		while(aux!=NULL){
@@ -382,29 +450,14 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 				list_places->head=NewTHListNode_YA();
 				strcpy(list_places->head->payload.place, aux->payload.city);
                         aux_newlist=list_places->head;
-            	aux_newlist->payload.average+=aux->payload.temperature;
-				aux_newlist->payload.num_of_val++;
-				if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
-						aux_newlist->payload.maximum_temp=aux->payload.temperature;
-				}
-				if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
-						aux_newlist->payload.minimum_temp=aux->payload.temperature;
-				}
-                        aux=aux->next;
+            	Fill_YA_Nodes(aux_newlist,aux);
       			continue;
 			}
 
 			aux_newlist=list_places->head;
 			while(aux_newlist!=NULL){
 				if (strcmp(aux_newlist->payload.place,aux->payload.city)==0){
-					aux_newlist->payload.average+=aux->payload.temperature;
-					aux_newlist->payload.num_of_val++;
-					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
-							aux_newlist->payload.maximum_temp=aux->payload.temperature;
-					}
-					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
-							aux_newlist->payload.minimum_temp=aux->payload.temperature;
-					}
+					Fill_YA_Nodes(aux_newlist,aux);
                   	break;
 				}
 				aux_newlist=aux_newlist->next;
@@ -414,14 +467,7 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
                               list_places->head->next=aux_to_link;
                               strcpy(list_places->head->payload.place, aux->payload.city);
                               aux_newlist=list_places->head;
-                              aux_newlist->payload.average+=aux->payload.temperature;
-      					aux_newlist->payload.num_of_val++;
-      					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
-      							aux_newlist->payload.maximum_temp=aux->payload.temperature;
-      					}
-      					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
-      							aux_newlist->payload.minimum_temp=aux->payload.temperature;
-      					}
+                              Fill_YA_Nodes(aux_newlist,aux);
                         }
 			}
 
@@ -429,12 +475,12 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 		}
 	}
 
-      PrintTH(list_places,"TESTE");
+     PrintTH(list_places,"TESTE");
+
+    //PrintYA();
+
 
 }
-
-
-
 
 void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries, int months_MA){
       float *ma_array[13], *ma_unidim_array;

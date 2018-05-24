@@ -9,10 +9,6 @@
 #include "graphics.h"
 #include "data_treatment.h"
 
-//ALEX estes consts chars não servem para nada pois não?
-const char myName[] = "Alex";
-const char myNumber[] = "Golo";
-const int colors[3][MAX_COLORS] = {{246, 52, 255, 186, 124},{255, 211, 0, 0, 39},{37, 21, 0, 93, 137}};
 
 int main(int argc, char *argv[]){
     int i=0;
@@ -95,12 +91,6 @@ int main(int argc, char *argv[]){
 //----------------END OF INITIALIZATIONS-------------------------------------------------//
 
 
-
-      /*for(i=0; i<number_of_cities; i++){
-            printf("%s\n", cities_names[i] );
-            printf("%d____%d\n", pixel_coord_cities[0][i], pixel_coord_cities[1][i] );
-      }
-	*/
 
       printf("%d  %d   %d   %d", extremes_dates[0],extremes_dates[1],extremes_dates[2],extremes_dates[3]);
 
