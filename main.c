@@ -187,16 +187,9 @@ int main(int argc, char *argv[]){
                               SDL_RenderClear(renderer);
                               RenderTable( board_size_px, serif, imgs, renderer);
                               SDL_RenderPresent(renderer);
-
                               break;
-
-                              case SDLK_2:
-
-                             // ChoosingYear( renderer, sans, &data_year_graphical[6], segment);
-
-
-                              break;
-                              case SDLK_q:
+                              
+                              case SDLK_9:
                                     quit = 1;
 
                                     break;

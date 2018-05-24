@@ -342,7 +342,8 @@ void RenderPoints(TTF_Font *segment,list_t* extremes_cities, int *pixel_coord_ci
 	
 	 for ( k = min; k < max; k++){
 		 for ( f = 01; f < 13; f++){
-
+			
+					RenderTable( board_size_px, serif, imgs, renderer);
 			 RenderCounterOnScreen(_renderer, segment, k, f); //Render the counter to show the date displayed
 
 			 for ( i = 0; i < number_of_cities; i++){
