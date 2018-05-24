@@ -27,13 +27,8 @@ int main(int argc, char *argv[]){
     int months_interval[2] = {0};
     char files[2][FILENAME_SIZE]={{0}};
 
-
-    int board_pos_x = 0;
-    int board_pos_y = 0;
     int square_size_px = 0;
     int board_size_px[2] = {0};
-    int board[MAX_BOARD_POS][MAX_BOARD_POS] = {{0}};
-    int moves[MAX_BOARD_POS][MAX_BOARD_POS] = {{0}}; // guarda os moves
     int delay = 300;
     int pt_x = 0;
     int pt_y = 0;
@@ -54,7 +49,8 @@ int main(int argc, char *argv[]){
     SDL_Renderer *renderer = NULL;
     TTF_Font *serif = NULL;
     TTF_Font *sans = NULL; //nova fonte
-    SDL_Surface *imgs[6];
+    TTF_Font *segment = NULL;
+    SDL_Surface *imgs[4];
     SDL_Event event;
 
 
@@ -95,7 +91,7 @@ int main(int argc, char *argv[]){
           }
       }
 
-      CityCoordinateCalculator(extremes_cities->head, &pt_x, &pt_y,pixel_coord_cities, number_of_cities, temp_cities,cities_names);
+      CityCoordinateCalculator(extremes_cities->head, &pt_x, &pt_y,pixel_coord_cities, number_of_cities,cities_names);
 //----------------END OF INITIALIZATIONS-------------------------------------------------//
 
 
@@ -171,8 +167,10 @@ int main(int argc, char *argv[]){
       }
       else if (mode == GRAPHICAL){
             //initialize graphics
-            InitEverything(width, height, &serif, &sans, imgs, &window, &renderer);
+            InitEverything(width, height, &serif, &sans, &segment, imgs, &window, &renderer);
 
+			RenderTable( board_size_px, serif, imgs, renderer);
+			SDL_RenderPresent(renderer);
             while( quit == 0 ){
             // while there's events to handle
             while( SDL_PollEvent( &event ) )
@@ -184,29 +182,42 @@ int main(int argc, char *argv[]){
                   else if ( event.type == SDL_KEYDOWN )
                   {
                         switch ( event.key.keysym.sym ){
-                              case SDLK_n:
-                              // todo
+                              case SDLK_1:
+                              RenderPoints(segment,extremes_cities, pixel_coord_cities, board_size_px, square_size_px, renderer, number_of_cities, cities_names, extremes_dates);
+                              SDL_RenderClear(renderer);
+                              RenderTable( board_size_px, serif, imgs, renderer);
+                              SDL_RenderPresent(renderer);
+
+                              break;
+
+                              case SDLK_2:
+
+                             // ChoosingYear( renderer, sans, &data_year_graphical[6], segment);
+
+
+                              break;
                               case SDLK_q:
                                     quit = 1;
-                              case SDLK_u:
-                              // todo
+
+                                    break;
+
                               default:
                                     break;
-                }      i++; // for the last one
+                }
                   }
             }
-            // render game table
-           square_size_px = RenderTable( board_pos_x, board_pos_y, board_size_px, serif, imgs, renderer, board, moves);
 
-           RenderPoints(board, pixel_coord_cities, temp_cities, board_size_px, square_size_px, renderer, number_of_cities);
+            // render game table
+          // square_size_px = RenderTable( board_pos_x, board_pos_y, board_size_px, serif, imgs, renderer, board, moves);
+
+
            //render in the screen all changes above
-           SDL_RenderPresent(renderer);
+
 
            // add a delay
-           SDL_Delay( delay );
+           //SDL_Delay( delay );
            }
-      }
-      else{
+      }      else{
             printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "Even after input check, fell in a undefined mode.");
             exit(EXIT_FAILURE);
       }
