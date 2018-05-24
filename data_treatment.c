@@ -63,15 +63,15 @@ void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
       char c[10];
 
       if(extreme->head->payload.num_of_val==0 && extreme->tail->payload.num_of_val==0){
-		printf("Não foram encontrados dados sobre %s que permitissem a análise requerida", place_in_analysis);
-		return;
-	}
+		      printf("Não foram encontrados dados sobre %s que permitissem a análise requerida", place_in_analysis);
+		        return;
+	        }
 
-	printf("_____________________%s_____________________\nInicio periodo, Fim periodo, temp max, temp min, media\n",place_in_analysis );
+	    printf("_____________________%s_____________________\nInicio periodo, Fim periodo, temp max, temp min, media\n",place_in_analysis );
 
-      while(aux->next!= NULL){
+      while(aux!= NULL){
 
-            /*printf("[%d,%d[",aux->payload.begin_period/10000, aux->payload.end_period/10000);
+    /*        printf("[%d,%d[",aux->payload.begin_period/10000, aux->payload.end_period/10000);
             if (aux->payload.average==0){
                   printf("      NO DATA AVAILABLE\n");
             }
@@ -305,22 +305,15 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 
     int i=0, num_of_periods=0, concatenateddate=0;
 
-    printf("AAAAAAAAAAAAAAAAa\n");
-
     list_places = (list_th_t*)malloc(sizeof(list_th_t));
-          if (list_places == NULL){
-                printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of list_places!");
-                exit(EXIT_FAILURE);
-          }
-          printf("%s\n","BBBBBBBBBBBBBBBBBBBBBBBb" );
+        if (list_places == NULL){
+            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of list_places!");
+            exit(EXIT_FAILURE);
+        }
 
-      list_places->head=NULL;
+    list_places->head=NULL;
 
-
-      printf("IIIIIIIIIIIIIIIin\n");
-
-
-      if(auxyta==PER_COUNTRY){
+    if(auxyta==PER_COUNTRY){
 		aux=extremes_countries->head;
 		while(aux!=NULL){
                   if(aux->payload.dt.year!=year_in_analysis){
@@ -331,14 +324,14 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 				list_places->head=NewTHListNode_YA();
 				strcpy(list_places->head->payload.place, aux->payload.country);
                         aux_newlist=list_places->head;
-            		aux_newlist->payload.average+=aux->payload.temperature;
-					aux_newlist->payload.num_of_val++;
-					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
-							aux_newlist->payload.maximum_temp=aux->payload.temperature;
-					}
-					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
-							aux_newlist->payload.minimum_temp=aux->payload.temperature;
-					}
+            	aux_newlist->payload.average+=aux->payload.temperature;
+				aux_newlist->payload.num_of_val++;
+				if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
+						aux_newlist->payload.maximum_temp=aux->payload.temperature;
+				}
+				if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
+						aux_newlist->payload.minimum_temp=aux->payload.temperature;
+				}
                         aux=aux->next;
       			continue;
 			}
@@ -379,7 +372,61 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 	}
 
 	else if(auxyta==PER_CITY){
-		aux=extremes_cities->head;
+        aux=extremes_cities->head;
+		while(aux!=NULL){
+                  if(aux->payload.dt.year!=year_in_analysis){
+                        aux=aux->next;
+                        continue;
+                  }
+			if(list_places->head==NULL){
+				list_places->head=NewTHListNode_YA();
+				strcpy(list_places->head->payload.place, aux->payload.city);
+                        aux_newlist=list_places->head;
+            	aux_newlist->payload.average+=aux->payload.temperature;
+				aux_newlist->payload.num_of_val++;
+				if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
+						aux_newlist->payload.maximum_temp=aux->payload.temperature;
+				}
+				if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
+						aux_newlist->payload.minimum_temp=aux->payload.temperature;
+				}
+                        aux=aux->next;
+      			continue;
+			}
+
+			aux_newlist=list_places->head;
+			while(aux_newlist!=NULL){
+				if (strcmp(aux_newlist->payload.place,aux->payload.city)==0){
+					aux_newlist->payload.average+=aux->payload.temperature;
+					aux_newlist->payload.num_of_val++;
+					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
+							aux_newlist->payload.maximum_temp=aux->payload.temperature;
+					}
+					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
+							aux_newlist->payload.minimum_temp=aux->payload.temperature;
+					}
+                  	break;
+				}
+				aux_newlist=aux_newlist->next;
+                        if (aux_newlist==NULL){
+                              aux_to_link=list_places->head;
+                              list_places->head=NewTHListNode_YA();
+                              list_places->head->next=aux_to_link;
+                              strcpy(list_places->head->payload.place, aux->payload.city);
+                              aux_newlist=list_places->head;
+                              aux_newlist->payload.average+=aux->payload.temperature;
+      					aux_newlist->payload.num_of_val++;
+      					if (aux_newlist->payload.maximum_temp < aux->payload.temperature || aux_newlist->payload.maximum_temp==0){
+      							aux_newlist->payload.maximum_temp=aux->payload.temperature;
+      					}
+      					if (aux_newlist->payload.minimum_temp > aux->payload.temperature || aux_newlist->payload.minimum_temp==0){
+      							aux_newlist->payload.minimum_temp=aux->payload.temperature;
+      					}
+                        }
+			}
+
+			aux=aux->next;
+		}
 	}
 
       PrintTH(list_places,"TESTE");
