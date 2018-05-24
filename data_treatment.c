@@ -71,14 +71,14 @@ void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
 
       while(aux!= NULL){
 
-    /*        printf("[%d,%d[",aux->payload.begin_period/10000, aux->payload.end_period/10000);
+            printf("[%d,%d[",aux->payload.begin_period/10000, aux->payload.end_period/10000);
             if (aux->payload.average==0){
                   printf("      NO DATA AVAILABLE\n");
             }
             else printf(",%f,%f,%f\n", (aux->payload.maximum_temp),(aux->payload.minimum_temp), (aux->payload.average/aux->payload.num_of_val));
-            // RevertConcatenation(aux->payload.begin_period);*/
-            printf("%s,%f, %f,%f, %f\n",aux->payload.place, (aux->payload.average/aux->payload.num_of_val),
-                        aux->payload.maximum_temp, aux->payload.minimum_temp, (aux->payload.maximum_temp-aux->payload.minimum_temp)) ;
+            // RevertConcatenation(aux->payload.begin_period);
+      //      printf("%s,%f, %f,%f, %f\n",aux->payload.place, (aux->payload.average/aux->payload.num_of_val),
+      //                  aux->payload.maximum_temp, aux->payload.minimum_temp, (aux->payload.maximum_temp-aux->payload.minimum_temp)) ;
             aux=aux->next;
             i++;
             if (i==20){

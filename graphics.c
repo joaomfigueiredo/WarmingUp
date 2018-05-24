@@ -68,7 +68,6 @@ SDL_Renderer* CreateRenderer(int width, int height, SDL_Window *_window){
     return renderer;
 }
 
-
 void InitEverything(int width, int height, TTF_Font **_font, TTF_Font **_font2, TTF_Font **_font3, SDL_Surface *_img[], SDL_Window** _window, SDL_Renderer** _renderer){
     InitSDL();
     InitFont();
@@ -147,7 +146,6 @@ int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer){
     SDL_DestroyTexture(text_IST);
     return _logoIST->h;
 }
-
 
 void RenderTable( int _board_size_px[], TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer){
     SDL_Color dark = { 255, 255, 255 };
@@ -275,7 +273,6 @@ void CalculatePos (node_t* _aux ,int* pt_x, int* pt_y  ){
 
 }
 
-
 void CityCoordinateCalculator(node_t *_head, int *pt_x, int *pt_y,int *pixel_coord_cities[2], int number_of_cities, char *cities_names[BUFFER_SIZE]){
 
 	//this function uses the information in the list of the cities
@@ -396,8 +393,6 @@ void filledCircleRGBA(SDL_Renderer * _renderer, int _circleX, int _circleY, int 
     }
 }
 
-
-
 void colorTemperatureToRGB (float _temp ,int* red, int* green, int* blue){
 
     //this function is based on linear calculus. the measures where made bases in a -15 to a 40 degrees scale, putting blue as cold
@@ -447,8 +442,6 @@ void colorTemperatureToRGB (float _temp ,int* red, int* green, int* blue){
      }
 }
 
-
-
 void RenderCounterOnScreen( SDL_Renderer *_renderer, TTF_Font *_font3, int _year, int _month){
 
 	//this function renders the counter in the screen when we want to see the temporal simulator
@@ -465,7 +458,6 @@ void RenderCounterOnScreen( SDL_Renderer *_renderer, TTF_Font *_font3, int _year
 
      RenderText(rect.x+ 5, rect.y+15, str, _font3, &red, _renderer );		//renders the executions before
 }
-
 
 /*
 void ChoosingYear( SDL_Renderer *_renderer, TTF_Font *sans, int data_year_graphical[], TTF_Font *segment){

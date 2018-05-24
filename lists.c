@@ -421,7 +421,6 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
 
 }
 
-
 //TO BE REMOVED
 void RevertConcatenation(int concatenateddate){
 	date_t* aux= NULL;

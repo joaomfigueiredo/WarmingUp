@@ -107,25 +107,21 @@ int ParamReading(int argc, char *argv[], char files[2][50]){
       return _mode;
 }
 
-void MenuSurfer(int* T, int* year_in_analysis, int* aux_df, int* aux_ms, int* _auxth,int* aux_ma, int* auxyta, int* months_MA, char place_in_analysis[BUFFER_SIZE]){
+void MenuSurfer(int* T, int* year_in_analysis, int* aux_df, int* aux_quit, int* _auxth,int* aux_ma, int* auxyta, int* months_MA, char place_in_analysis[BUFFER_SIZE]){
 
       switch (MainMenu()) {
                         case 0:
                             break;
                         case 1:
-                            *aux_ms = 0;
                             *aux_df = DataFilter();
                             break;
                         case 2:
-                            *aux_ms = 1;
                             TemperatureHistory(T,_auxth, place_in_analysis);
                             break;
                         case 3:
-                            *aux_ms = 1;
                             YearTempAnalise(year_in_analysis, auxyta);
                             break;
                         case 4:
-                            *aux_ms = 1;
                             GlobalTempAnalise(months_MA, aux_ma, place_in_analysis);
                             break;
                         default:
