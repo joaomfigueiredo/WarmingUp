@@ -64,10 +64,10 @@ void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
 
       if(extreme->head->payload.num_of_val==0 && extreme->tail->payload.num_of_val==0){
 		      printf("Não foram encontrados dados sobre %s que permitissem a análise requerida", place_in_analysis);
-		        return;
-	        }
+		      return;
+	}
 
-	    printf("_____________________%s_____________________\nInicio periodo, Fim periodo, temp max, temp min, media\n",place_in_analysis );
+	printf("_____________________%s_____________________\n\nInicio periodo, Fim periodo, temp max, temp min, media\n",place_in_analysis );
 
       while(aux!= NULL){
 
@@ -75,10 +75,8 @@ void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
             if (aux->payload.average==0){
                   printf("      NO DATA AVAILABLE\n");
             }
-            else printf(",%f,%f,%f\n", (aux->payload.maximum_temp),(aux->payload.minimum_temp), (aux->payload.average/aux->payload.num_of_val));
-            // RevertConcatenation(aux->payload.begin_period);
-      //      printf("%s,%f, %f,%f, %f\n",aux->payload.place, (aux->payload.average/aux->payload.num_of_val),
-      //                  aux->payload.maximum_temp, aux->payload.minimum_temp, (aux->payload.maximum_temp-aux->payload.minimum_temp)) ;
+            printf(", %.3f, %.3f, %.3f\n", (aux->payload.maximum_temp),(aux->payload.minimum_temp), (aux->payload.average/aux->payload.num_of_val));
+
             aux=aux->next;
             i++;
             if (i==20){
@@ -104,7 +102,7 @@ void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
 void TempHistGLOBAL_COUNTRIES(list_t *extremes_countries,int  T,int auxth,char place_in_analysis[BUFFER_SIZE],int extremes_dates[4]){
       list_th_t *temp_hist_list=NULL;
       node_t *aux = extremes_countries->head;
-      node_th_t *newNode=NULL, *delayed_aux=NULL, *th_list_iterator=NULL;
+      node_th_t *newNode=NULL, *delayed_aux=NULL, *th_list_iterator=NULL, *aux1=NULL, *tmp=NULL;
       int i=0, num_of_periods=0;
 
       //PrintCompleteNode(*aux, COUNTRIES);
@@ -172,8 +170,12 @@ void TempHistGLOBAL_COUNTRIES(list_t *extremes_countries,int  T,int auxth,char p
 
       PrintTH(temp_hist_list, place_in_analysis);
 
-      //
-      //freeList(temp_hist_list->head);
+      aux1 = temp_hist_list->head;
+      while(aux1!=NULL){
+            tmp=aux1;
+            aux1=aux1->next;
+            free(tmp);
+      }
       free(temp_hist_list);
 
 }
@@ -181,7 +183,7 @@ void TempHistGLOBAL_COUNTRIES(list_t *extremes_countries,int  T,int auxth,char p
 void TempHistCITIES(list_t *extremes_cities,int  T,int auxth,char place_in_analysis[BUFFER_SIZE],int extremes_dates[4]){
       list_th_t *temp_hist_list=NULL;
       node_t *aux = extremes_cities->head;
-      node_th_t *newNode=NULL, *delayed_aux=NULL, *th_list_iterator=NULL;
+      node_th_t *newNode=NULL, *delayed_aux=NULL, *th_list_iterator=NULL, *aux1=NULL, *tmp=NULL;
       int i=0, num_of_periods=0, concatenateddate=0;
 
       //PrintCompleteNode(*aux, COUNTRIES);
@@ -249,6 +251,13 @@ void TempHistCITIES(list_t *extremes_cities,int  T,int auxth,char place_in_analy
 
       PrintTH(temp_hist_list, place_in_analysis);
 
+
+      aux1 = temp_hist_list->head;
+      while(aux1!=NULL){
+            tmp=aux1;
+            aux1=aux1->next;
+            free(tmp);
+      }
       free(temp_hist_list);
 
 }
@@ -285,13 +294,12 @@ node_th_t* NewTHListNode_YA(){
             exit(EXIT_FAILURE);
       }
 
-
 	newNode-> payload.average=0;
 	newNode-> payload.num_of_val=0;
 	newNode-> payload.maximum_temp = 0;
 	newNode-> payload.minimum_temp = 0;
-    newNode-> next = NULL;
-    newNode-> prev = NULL;
+      newNode-> next = NULL;
+      newNode-> prev = NULL;
 
       return newNode;
 }
@@ -328,81 +336,239 @@ void Fill_YA_Nodes(node_th_t* aux_newlist, node_t* aux){
     }
 }
 
-/*
-void PrintYA(int nYears, list_th_t *list_places){
-    list_th_t *Hot, *Cold, *Amp; //lists with the same nodes of list_places but sorted
+void YASort_hotter(list_th_t *target_list){
+      node_th_t *aux1=NULL, *aux2=NULL;
 
-    Hot = (list_th_t*)malloc(sizeof(list_th_t));
-        if (Hot == NULL){
-            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Hot!");
-            exit(EXIT_FAILURE);
-        }
-    Hot->head=NULL;
+      aux1=target_list->head;
+      aux2=aux1->next;
 
-    Cold = (list_th_t*)malloc(sizeof(list_th_t));
-        if (Cold == NULL){
-            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Cold!");
-            exit(EXIT_FAILURE);
-        }
-    Cold->head=NULL;
-
-    Amp = (list_th_t*)malloc(sizeof(list_th_t));
-        if (Amp == NULL){
-            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Amp!");
-            exit(EXIT_FAILURE);
-        }
-    Amp->head=NULL;
-
-    while(aux!=NULL){
-        if (Hot->head==NULL){
-            Hot->head=aux;
-        }
-        if (Cold->head==NULL){
-            Cold->head=aux;
-        }
-        if (Amp->head==NULL){
-            Amp->head=aux;
-            continue
-        }
-        while(aux_in!=NULL){
-            if(aux_in->payload.smtg<aux->payload.smtg){
-                aux_to_link=
+      while(aux2!=NULL){
+            if (aux1->payload.maximum_temp < aux2->payload.maximum_temp){
+                  if(aux1==target_list->head){
+                        target_list->head=aux2;
+                        aux1->next=aux2->next;
+                        aux2->next->prev=aux1;
+                        aux2->next=aux1;
+                        aux1->prev=aux2;
+                        target_list->head->prev=NULL;
+                  }
+                  else{
+                        aux1->prev->next=aux2;
+                        aux2->prev=aux1->prev;
+                        aux1->prev=aux2;
+                        aux1->next=aux2->next;
+                        if (aux2->next!=NULL) aux2->next->prev=aux1;
+                        aux2->next=aux1;
+                  }
+                  aux1=target_list->head;
+                  aux2=aux1->next;
             }
-        }
-
-        while(aux_in!=NULL){
-            if(aux_in->payload.smtg<aux->payload.smtg){
-                aux_to_link=
+            else{
+                  aux1=aux2;
+                  aux2=aux2->next;
             }
-        }
+      }
+      target_list->tail=aux1;
+}
 
-        while(aux_in!=NULL){
-            if(aux_in->payload.smtg<aux->payload.smtg){
-                aux_to_link=
+void YASort_colder(list_th_t *target_list){
+      node_th_t *aux1=NULL, *aux2=NULL;
+
+      aux1=target_list->head;
+      aux2=aux1->next;
+
+      while(aux2!=NULL){
+            if (aux1->payload.minimum_temp > aux2->payload.minimum_temp){
+                  if(aux1==target_list->head){
+                        target_list->head=aux2;
+                        aux1->next=aux2->next;
+                        aux2->next->prev=aux1;
+                        aux2->next=aux1;
+                        aux1->prev=aux2;
+                        target_list->head->prev=NULL;
+                  }
+                  else{
+                        aux1->prev->next=aux2;
+                        aux2->prev=aux1->prev;
+                        aux1->prev=aux2;
+                        aux1->next=aux2->next;
+                        if (aux2->next!=NULL) aux2->next->prev=aux1;
+                        aux2->next=aux1;
+                  }
+                  aux1=target_list->head;
+                  aux2=aux1->next;
             }
-        }
-        aux=aux->next;
-    }
+            else{
+                  aux1=aux2;
+                  aux2=aux2->next;
+            }
+      }
+      target_list->tail=aux1;
+}
+
+void YASort_amplitude(list_th_t *target_list){
+      node_th_t *aux1=NULL, *aux2=NULL;
+
+      aux1=target_list->head;
+      aux2=aux1->next;
+
+      while(aux2!=NULL){
+            if ( (aux1->payload.maximum_temp - aux1->payload.minimum_temp) < (aux2->payload.maximum_temp - aux2->payload.minimum_temp)){
+                  if(aux1==target_list->head){
+                        target_list->head=aux2;
+                        aux1->next=aux2->next;
+                        aux2->next->prev=aux1;
+                        aux2->next=aux1;
+                        aux1->prev=aux2;
+                        target_list->head->prev=NULL;
+                  }
+                  else{
+                        aux1->prev->next=aux2;
+                        aux2->prev=aux1->prev;
+                        aux1->prev=aux2;
+                        aux1->next=aux2->next;
+                        if (aux2->next!=NULL) aux2->next->prev=aux1;
+                        aux2->next=aux1;
+                  }
+                  aux1=target_list->head;
+                  aux2=aux1->next;
+            }
+            else{
+                  aux1=aux2;
+                  aux2=aux2->next;
+            }
+      }
+      target_list->tail=aux1;
+}
+
+void PrintYA(list_th_t *list_places){
+      list_th_t *Hot=NULL, *Cold=NULL, *Amp=NULL; //lists with the same nodes of list_places but sorted
+      node_th_t *newNode=NULL, *aux=NULL;
+      node_th_t *H=NULL, *C=NULL, *A=NULL, *aux1=NULL, *aux2=NULL, *aux3=NULL;
+      int i=0, j=0, k=0;
+
+      Hot = (list_th_t*)malloc(sizeof(list_th_t));
+            if (Hot == NULL){
+                  printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Hot!");
+                  exit(EXIT_FAILURE);
+            }
+      Hot->head=NULL;
+
+      Cold = (list_th_t*)malloc(sizeof(list_th_t));
+            if (Cold == NULL){
+                  printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Cold!");
+                  exit(EXIT_FAILURE);
+            }
+      Cold->head=NULL;
+
+      Amp = (list_th_t*)malloc(sizeof(list_th_t));
+            if (Amp == NULL){
+                  printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of Amp!");
+                  exit(EXIT_FAILURE);
+            }
+      Amp->head=NULL;
+
+      aux=(list_places->head);
+      //clones original list to them
+      while(aux!=NULL){
+            if (aux==(list_places->head)){
+            Hot->head=THNodeCloner(aux);
+            Cold->head=THNodeCloner(aux);
+            Amp->head=THNodeCloner(aux);
+            aux=aux->next;
+            continue;
+            }
+
+            newNode=THNodeCloner(aux);
+            Hot->head->prev=newNode;
+            newNode->next = Hot->head;
+	      Hot->head= newNode;
+
+            newNode=THNodeCloner(aux);
+            Cold->head->prev=newNode;
+            newNode->next = Cold->head;
+	      Cold->head= newNode;
+
+            newNode=THNodeCloner(aux);
+            Amp->head->prev=newNode;
+            newNode->next = Amp->head;
+	      Amp->head= newNode;
+
+            aux=aux->next;
+      }
+
+      H=Hot->head;
+      C=Cold->head;
+      A=Amp->head;
+
+      YASort_hotter(Hot);
+      YASort_colder(Cold);
+      YASort_amplitude(Amp);
+
+      H=Hot->head;
+      C=Cold->head;
+      A=Amp->head;
+
+      printf("Quantas linhas quer visualizar: ");
+      myscanint(&k,0, 21);
+
+      printf("\nMAIS QUENTE         MAIS FRIO           MAIS EXTREMO\n\n");
+      while(H!=NULL && j<k){
+            printf ("%s", H->payload.place);
+            for(i=0; i<(20-strlen(H->payload.place)); i++){
+                  printf(" ");
+            }
+            printf ("%s",C->payload.place);
+            for(i=0; i<(20-strlen(C->payload.place)); i++){
+                  printf(" ");
+            }
+            printf("%s\n", A->payload.place );
+
+
+            H=H->next;
+            C=C->next;
+            A=A->next;
+            j++;
+      }
+
+      H=Hot->head;
+      C=Cold->head;
+      A=Amp->head;
+
+      while(H!=NULL && C!=NULL && A!=NULL){
+            aux1=H;
+            aux2=C;
+            aux3=A;
+            H=H->next;
+            C=C->next;
+            A=A->next;
+            free(aux1);
+            free(aux2);
+            free(aux3);
+      }
+
+      free(Hot);
+      free(Cold);
+      free(Amp);
 
 }
-*/
 
 void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries){
-    //char warmest[20][BUFFER_SIZE], coolest[20][BUFFER_SIZE], greatest_amp[20][BUFFER_SIZE];
-    list_th_t *list_places=NULL;
-    node_t *aux = NULL;
-    node_th_t *aux_newlist=NULL, *aux_to_link=NULL;
+      //char warmest[20][BUFFER_SIZE], coolest[20][BUFFER_SIZE], greatest_amp[20][BUFFER_SIZE];
+      list_th_t *list_places=NULL;
+      node_t *aux = NULL;
+      node_th_t *aux_newlist=NULL, *aux_to_link=NULL;
 
-    auxyta++;//to correspond to define vars for per country and per city;
+      auxyta++;//to correspond to define vars for per country and per city;
 
-    list_places = (list_th_t*)malloc(sizeof(list_th_t));
-        if (list_places == NULL){
-            printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of list_places!");
-            exit(EXIT_FAILURE);
-        }
-    list_places->head=NULL;
-    //FILLS A LIST IN WICH EACH NODE COLLECTS ALL THE INFO OF A COUNTRU IN THE SPECIFIED YEAR
-    if(auxyta==PER_COUNTRY){
+      list_places = (list_th_t*)malloc(sizeof(list_th_t));
+            if (list_places == NULL){
+                  printf(ANSI_COLOR_ERRORS "ERROR:" ANSI_COLOR_RESET "in memory allocation of list_places!");
+                  exit(EXIT_FAILURE);
+            }
+        list_places->head=NULL;
+      //FILLS A LIST IN WICH EACH NODE COLLECTS ALL THE INFO OF A COUNTRU IN THE SPECIFIED YEAR
+      if(auxyta==PER_COUNTRY){
 	    aux=extremes_countries->head;
 		while(aux!=NULL){
                   if(aux->payload.dt.year!=year_in_analysis){
@@ -414,7 +580,7 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 				strcpy(list_places->head->payload.place, aux->payload.country);
                         aux_newlist=list_places->head;
                         Fill_YA_Nodes(aux_newlist,aux);
-                aux=aux->next;
+                        aux=aux->next;
       			continue;
 			}
 
@@ -427,6 +593,7 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 				aux_newlist=aux_newlist->next;
                         if (aux_newlist==NULL){
                               aux_to_link=list_places->head;
+
                               list_places->head=NewTHListNode_YA();
                               list_places->head->next=aux_to_link;
                               strcpy(list_places->head->payload.place, aux->payload.country);
@@ -438,7 +605,7 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 			aux=aux->next;
 		}
 	}
-    //FILLS A LIST IN WICH EACH NODE COLLECTS ALL THE INFO OF A CITY IN THE SPECIFIED YEAR
+      //FILLS A LIST IN WICH EACH NODE COLLECTS ALL THE INFO OF A CITY IN THE SPECIFIED YEAR
 	else if(auxyta==PER_CITY){
         aux=extremes_cities->head;
 		while(aux!=NULL){
@@ -475,11 +642,9 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 		}
 	}
 
-     PrintTH(list_places,"TESTE");
+      PrintYA(list_places);
 
-    //PrintYA();
-
-
+      free(list_places);
 }
 
 void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries, int months_MA){

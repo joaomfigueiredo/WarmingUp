@@ -9,15 +9,15 @@
 //Breves notas sobre o projeto:
 //O nosso projeto realiza, excluindo as funcionalidades gráficas avançadas, as operações
 //requisitadas sobre os dados fornecidos. Para carregarmos o ficheiro do paises ordenadamente
-//(em tempo util) recorremos a uma organização dos valores numa árvore binária. Esta é,
-//imediatemente após servir como ferramenta de sort,  "transformada" numa lista ordenada
+//(em tempo util) recorremos à organização dos valores numa árvore binária. Esta é,
+//imediatemente após servir como ferramenta de "sort",  "transformada" numa lista ordenada.
 //Atendemos assim ao requerido no enunciado e facilitamos as posteriores operaçoes.
 //O ficheiro das cidades, para garantir que os valores de cada cidade ficam agrupados
-//também é carregado com recurso á mesma ferramenta
-//Para fazer comparações entre datas, optamos por concatenar ano/mes/dia. À partida
-//parecia simplificar e acelerar as comparações as ao longo do projeto concluimos que o
-//benificio não foi grande.
-//
+//também é carregado com recurso á mesma ferramenta (o valor de sort é obtido através das suas coordenadas)
+//Para fazer comparações entre datas, optámos por concatenar ano/mes/dia. À partida
+//parecia simplificar e acelerar as comparações, contudo, ao longo do projeto, concluimos que o
+//benificio não seria tão evidente. Ainda assim, é o que apresentamos por continuar a suprimir as
+//demandas.
 
 
 #include <SDL2/SDL.h>
@@ -126,7 +126,6 @@ int main(int argc, char *argv[]){
                         TreatmentDataFilter(&aux_df, starting_yearmonth, months_interval);
                         if (aux_df==1){
                               ReLoadFiles(files,extremes_countries, extremes_cities, extremes_dates);
-                              aux_df=0;
                               break;
                         }
                         if (aux_df==2 && starting_yearmonth[0]*10000+starting_yearmonth[1]*100<extremes_dates[0]){
@@ -134,7 +133,11 @@ int main(int argc, char *argv[]){
                         }
                         ConditionalNodeDeleter(extremes_countries, COUNTRIES,months_interval,starting_yearmonth, extremes_dates);
                         ConditionalNodeDeleter(extremes_cities, CITIES,months_interval,starting_yearmonth, extremes_dates);
+                        break;
+                  }
+                  if(aux_df!=0){
                         aux_df=0;
+                        continue;
                   }
 
                   while (auxth!=0){
