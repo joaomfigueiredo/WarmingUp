@@ -5,6 +5,12 @@
 #include "data.h"
 #include "lists.h"
 
+/**
+ * With esception to the last two, all the functions within this file
+ * representate the terminal Menus and alter values that allow the
+ * navigation through them
+ */
+
 
 int ParamReading(int argc, char *argv[], char files[2][50]){
       int i=0, _mode=0;
@@ -175,17 +181,11 @@ void TemperatureHistory(int* T, int* _auxth, char place_in_analysis[BUFFER_SIZE]
                   default:
             break;
     }
-
-
 }
 
 void YearTempAnalise(int* year_in_analysis, int* auxyta){
-
-
-
      printf("Qual o ano que pretende analisar? ");
      myscanint ( year_in_analysis, 1700, 2018);
-
 
      printf(ANSI_COLOR_BOLD_MAGENTA "\n\nMENU ANÁLISE DA TEMPERATURA POR ANO: \n\n" ANSI_COLOR_RESET);
      printf(ANSI_COLOR_BOLD_BLUE "1 - Análise por país? \n" ANSI_COLOR_RESET);
@@ -193,11 +193,9 @@ void YearTempAnalise(int* year_in_analysis, int* auxyta){
 
      printf("\n Escolha a opção: ");
      myscanint ( auxyta, 0, 3);
-
 }
 
 void GlobalTempAnalise(int* months_MA, int* _aux_ma, char place_in_analysis[BUFFER_SIZE]){
-
      printf("Quantos meses pretende utilizar no cálculo do MA? ");
      myscanint (months_MA, 0, 99);
 
@@ -211,24 +209,26 @@ void GlobalTempAnalise(int* months_MA, int* _aux_ma, char place_in_analysis[BUFF
 
      switch (*_aux_ma) {
            case 1:
-            break;
+                  break;
            case 2:
-            printf("Introduza o nome do país a analisar: ");
-            myscanstring(place_in_analysis);
-            break;
+                  printf("Introduza o nome do país a analisar: ");
+                  myscanstring(place_in_analysis);
+                  break;
            case 3:
-            printf("Introduza a cidade a analisar: " );
-            myscanstring(place_in_analysis);
-            break;
+                  printf("Introduza a cidade a analisar: " );
+                  myscanstring(place_in_analysis);
+                  break;
            default:
-            break;
+                  break;
      }
-
-
-
 
 }
 
+
+/**
+ * scans a int within a set range blocks
+ * strange inputs. allows reintroducion
+ */
 void myscanint ( int* _aux, int _min, int _max){
       char buffer[BUFFER_SIZE] = {0};
 
@@ -243,6 +243,9 @@ void myscanint ( int* _aux, int _min, int _max){
      }
 }
 
+/**
+ * scans words and assures that an ending /0 makes it a string
+ */
 void myscanstring(char place_in_analysis[BUFFER_SIZE]){
 
       while(1){

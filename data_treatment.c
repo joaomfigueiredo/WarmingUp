@@ -6,7 +6,9 @@
 #include "data_treatment.h"
 #include "lists.h"
 
-
+/**
+ * Scans inputs to filter list of countries/cities
+ */
 void TreatmentDataFilter(int* aux_df, int starting_yearmonth[2], int monthspan[2]){
      int i = 0;
      char buffer[BUFFER_SIZE] = {0};
@@ -57,6 +59,9 @@ void TreatmentDataFilter(int* aux_df, int starting_yearmonth[2], int monthspan[2
 
 }
 
+/**
+ * Prints temeprature history data (and calculates average while printing)
+ */
 void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
       node_th_t *aux = extreme->head;
       int i=0;
@@ -99,6 +104,9 @@ void PrintTH(list_th_t *extreme,char place_in_analysis[BUFFER_SIZE]){
       }
 }
 
+/**
+   gather usefull nodes to display temperature history on countries
+ */
 void TempHistGLOBAL_COUNTRIES(list_t *extremes_countries,int  T,int auxth,char place_in_analysis[BUFFER_SIZE],int extremes_dates[4]){
       list_th_t *temp_hist_list=NULL;
       node_t *aux = extremes_countries->head;
@@ -180,6 +188,9 @@ void TempHistGLOBAL_COUNTRIES(list_t *extremes_countries,int  T,int auxth,char p
 
 }
 
+/**
+   gather usefull nodes to display temperature history on cities
+ */
 void TempHistCITIES(list_t *extremes_cities,int  T,int auxth,char place_in_analysis[BUFFER_SIZE],int extremes_dates[4]){
       list_th_t *temp_hist_list=NULL;
       node_t *aux = extremes_cities->head;
@@ -262,6 +273,9 @@ void TempHistCITIES(list_t *extremes_cities,int  T,int auxth,char place_in_analy
 
 }
 
+/**
+ * Creates a node with a payload specific but common both to temperature history funtionality and year analysis
+ */
 node_th_t* NewTHListNode(int i,int T){
       node_th_t *newNode=NULL;
 
@@ -284,6 +298,9 @@ node_th_t* NewTHListNode(int i,int T){
       return newNode;
 }
 
+/**
+ * same as above but with different initializations
+ */
 node_th_t* NewTHListNode_YA(){
       node_th_t *newNode=NULL;
 
@@ -304,6 +321,11 @@ node_th_t* NewTHListNode_YA(){
       return newNode;
 }
 
+/**
+ * [THNodeCloner description]
+ * @param  InNode [description]
+ * @return        [description]
+ */
 node_th_t* THNodeCloner(node_th_t* InNode){
     node_th_t *newNode=NULL;
 
@@ -336,6 +358,9 @@ void Fill_YA_Nodes(node_th_t* aux_newlist, node_t* aux){
     }
 }
 
+/**
+ * bubble sorted highest temp on top
+ */
 void YASort_hotter(list_th_t *target_list){
       node_th_t *aux1=NULL, *aux2=NULL;
 
@@ -371,6 +396,9 @@ void YASort_hotter(list_th_t *target_list){
       target_list->tail=aux1;
 }
 
+/**
+ * bubble sorted lowest temp on top
+ */
 void YASort_colder(list_th_t *target_list){
       node_th_t *aux1=NULL, *aux2=NULL;
 
@@ -406,6 +434,9 @@ void YASort_colder(list_th_t *target_list){
       target_list->tail=aux1;
 }
 
+/**
+ * bubble sorted highest temp amplitude on top
+ */
 void YASort_amplitude(list_th_t *target_list){
       node_th_t *aux1=NULL, *aux2=NULL;
 
@@ -441,6 +472,9 @@ void YASort_amplitude(list_th_t *target_list){
       target_list->tail=aux1;
 }
 
+/**
+ * print Year Analysis in the require format
+ */
 void PrintYA(list_th_t *list_places){
       list_th_t *Hot=NULL, *Cold=NULL, *Amp=NULL; //lists with the same nodes of list_places but sorted
       node_th_t *newNode=NULL, *aux=NULL;
@@ -553,6 +587,12 @@ void PrintYA(list_th_t *list_places){
 
 }
 
+/**
+ * Mainly this function calls those above.
+ * Together they gather the info needed in a list
+ *triplicates the list and order each one as required
+ *for the previous printing
+ */
 void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries){
       //char warmest[20][BUFFER_SIZE], coolest[20][BUFFER_SIZE], greatest_amp[20][BUFFER_SIZE];
       list_th_t *list_places=NULL;
@@ -646,12 +686,21 @@ void YearAnalysis(int auxyta, int year_in_analysis,int extremes_dates[4], list_t
 
       free(list_places);
 }
-
+/**
+*calculates moving average with the number of months
+*indicated by the user. To do so fills a table with
+*months temperatures and dimension [13][number of years]
+*then takes the months values to a unidmensional [12*number
+*of years] array to ease moving average computing. As it is
+*calculated, the output values replace the ones in the table.
+*In the end of this iteration, calculates a anual arithmetic
+*average. at this point, the "WARMINGup" allong the years is
+*calculated and displayed
+ */
 void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_dates[4], list_t* extremes_cities, list_t* extremes_countries, int months_MA){
       float *ma_array[13], *ma_unidim_array;
       int  num_years=0, i=0;
       int checkpoints_ma[5]={1860, 1910, 1960, 1990, 2013};
-      //list_t* local;
 
       if(aux_ma==PER_COUNTRY || aux_ma==GLOBAL){
             num_years=(extremes_dates[1]/10000)-(extremes_dates[0]/10000)+1;
@@ -659,7 +708,7 @@ void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_
       else if (aux_ma==PER_CITY){
             num_years=(extremes_dates[3]/10000)-(extremes_dates[2]/10000)+1;
       }
-      //printf("--------------%d------------\n", num_years);
+
 
       for (i=0; i<13; i++){
             ma_array[i] = calloc(num_years,sizeof(float));
@@ -680,7 +729,9 @@ void MovingAverage(int aux_ma, char place_in_analysis[BUFFER_SIZE],int extremes_
       free(ma_unidim_array);
 
 }
-
+/**
+ *fills the bidimentiona, above mentioned, array
+ */
 void Fill_MAarray(float *ma_array[13], int num_years, int extremes_dates[4], int aux_ma,
                   list_t* extremes_cities, list_t* extremes_countries,  char place_in_analysis[BUFFER_SIZE]){
 
@@ -740,7 +791,9 @@ void Fill_MAarray(float *ma_array[13], int num_years, int extremes_dates[4], int
 
 
 }
-
+/**
+ * Computes moving average iterating to a, also here filled, uni dim array
+ */
 void ComputeMA_permonth(float *ma_array[13], float *ma_unidim_array, int num_years, int months_MA){
       int i=0, j=0, k=0;
       int a1=0, a2=0;
@@ -782,7 +835,9 @@ void ComputeMA_permonth(float *ma_array[13], float *ma_unidim_array, int num_yea
       }
 
 }
-
+/**
+ * Performs the subtractions
+ */
 void Compute_DisplayWarming(float *ma_array[13], int checkpoints_ma[5], int extremes_dates[4], int aux_ma){
       int i=0, j=0, a=0;
       float maximum_temp=0, minimum_temp=50;

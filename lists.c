@@ -5,7 +5,9 @@
 #include "data.h"
 #include "lists.h"
 
-
+/**
+ * load countries file to program (MAINLY calls functions defined bellow)
+ */
 void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_countries, int extremes_dates[4], int mode ){
       int filetype=COUNTRIES;
       char buffer[BUFFER_SIZE]={0};
@@ -45,6 +47,9 @@ void LoadTempCountries(char file_countries[FILENAME_SIZE],list_t* extremes_count
        fclose(csv_countries);
 }
 
+/**
+ * load cities file to program (MAINLY calls functions defined bellow)
+ */
 void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities, int extremes_dates[4],int mode){
       int filetype=CITIES;
       char buffer[BUFFER_SIZE]={0};
@@ -84,6 +89,9 @@ void LoadTempCities(char file_cities[FILENAME_SIZE],list_t* extremes_cities, int
        fclose(csv_cities);
 }
 
+/**
+ * Scans each line of the csv to a data_temp_struct
+ */
 data_temp_t* CsvToStruct(char *_buffer, data_temp_t* _aux_csv_line, int _filetype, int mode){
       char *aux=NULL;
       int aux_01=0;
@@ -162,6 +170,9 @@ data_temp_t* CsvToStruct(char *_buffer, data_temp_t* _aux_csv_line, int _filetyp
       return _aux_csv_line;
 }
 
+/**
+ * the three functions bellow are not in use currently but, as they are usefull to track problems, were left
+ */
 void PrintNode(data_temp_t aux){
       printf("%d-%d-%d",aux.dt.year, aux.dt.month, aux.dt.day );
       printf("_______TEMP - %f", aux.temperature );
@@ -186,6 +197,23 @@ void PrintCompleteNode(node_t aux, int filetype){
 
 }
 
+void PrintList(node_t *extreme, int filetype){
+      node_t *aux = extreme;
+      int i=0;
+      //prev-tail-decreasing / next-head-increasing
+      while(aux != NULL){
+            PrintCompleteNode(*aux, filetype);
+            aux=aux->prev;
+            i++;
+      }
+
+      printf("TOTAL_____%d\n", i );
+}
+
+
+/**
+ *allocates a "tree shape" node
+ */
 tree_node_t* NewTreeNode(data_temp_t _aux){
       tree_node_t *newNode=NULL;
 
@@ -203,6 +231,9 @@ tree_node_t* NewTreeNode(data_temp_t _aux){
       return newNode;
 }
 
+/**
+ *allocates simple node
+ */
 node_t* NewListNode(data_temp_t _aux){
       node_t *newNode=NULL;
 
@@ -220,6 +251,9 @@ node_t* NewListNode(data_temp_t _aux){
       return newNode;
 }
 
+/**
+ * Inputs to the binary tree placed
+ */
 void TreeBuilder(list_t *extremes_countries, tree_node_t *_newNode){
       tree_node_t *curr = NULL;
 
@@ -248,13 +282,18 @@ void TreeBuilder(list_t *extremes_countries, tree_node_t *_newNode){
       }
 }
 
+/**
+ * calls the functions that generate and insert nodes
+ */
 void TreeLoader(data_temp_t newNodeDATA, list_t *extremes_countries){
       tree_node_t *newNode = NULL;
-
       newNode=NewTreeNode(newNodeDATA);
       TreeBuilder(extremes_countries, newNode);
 }
 
+/**
+ * breaks the tree to a list
+ */
 void TreetoList(tree_node_t* root, list_t* _extremes_countries){
       if(root->left!=NULL)    TreetoList(root->left,_extremes_countries);
 
@@ -264,6 +303,9 @@ void TreetoList(tree_node_t* root, list_t* _extremes_countries){
       free(root);
 }
 
+/**
+ * used to insert in the list the incoming nodes from the tree
+ */
 void insertListTail_fromtree(tree_node_t* node_to_insert, list_t* _extremes_countries){
       node_t *newNode = NULL;
 
@@ -280,19 +322,9 @@ void insertListTail_fromtree(tree_node_t* node_to_insert, list_t* _extremes_coun
       }
 }
 
-void PrintList(node_t *extreme, int filetype){
-      node_t *aux = extreme;
-      int i=0;
-      //prev-tail-decreasing / next-head-increasing
-      while(aux != NULL){
-            PrintCompleteNode(*aux, filetype);
-            aux=aux->prev;
-            i++;
-      }
-
-      printf("TOTAL_____%d\n", i );
-}
-
+/**
+ * knowing that they are grouped, count cities
+ */
 int CountCities(node_t *_head){
       node_t *aux = _head;
       int i=0;
@@ -306,6 +338,9 @@ int CountCities(node_t *_head){
       return i;
 }
 
+/**
+ * frees list made of  node_t's
+ */
 void freeList(node_t *_head){
       node_t *aux = _head;
       node_t *aux2 = NULL;
@@ -316,6 +351,9 @@ void freeList(node_t *_head){
       }
 }
 
+/**
+ *attending lowest date or month restriction nodes are deleted and the left relinked
+ */
 void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2], int starting_yearmonth[2] , int extremes_dates[4]){
       node_t *aux=NULL, *next_aux=NULL;
       int minimum_date = starting_yearmonth[0]*10000+starting_yearmonth[1]*100;
@@ -421,20 +459,9 @@ void ConditionalNodeDeleter(list_t *extreme, int filetype, int months_interval[2
 
 }
 
-//TO BE REMOVED
-void RevertConcatenation(int concatenateddate){
-	date_t* aux= NULL;
-
-		printf("ENTROU");
-        aux->year=concatenateddate/10000;
-		aux->day=concatenateddate%10000;
-		aux->month=(concatenateddate-(aux->day)-((aux->year)*10000));
-
-		printf("ANO%d_MES%d__DIA%d", aux->year, aux->month, aux->day);
-
-    //return aux;
-}
-
+/**
+ * Calls the functions that repeat the loading of a file (used in case of restrictions alteration)
+ */
 void ReLoadFiles(char files[2][50],list_t* extremes_countries, list_t* extremes_cities, int extremes_dates[]){
 
       freeList(extremes_cities->head);
